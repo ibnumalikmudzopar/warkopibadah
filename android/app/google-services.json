@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "835510226203",
+    "project_id": "warkopibadah-f91c9",
+    "storage_bucket": "warkopibadah-f91c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835510226203:android:eb3aec5b618652b17a17be",
+        "android_client_info": {
+          "package_name": "com.example.warkopibadah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADNNacf03vLFkgPiKaMbbajI9RLG2dwgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
