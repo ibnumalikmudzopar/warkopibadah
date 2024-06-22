@@ -173,10 +173,11 @@ class _HomeState extends State<Home> {
                 ActionPane(motion: ScrollMotion(),
                 children: [
                   SlidableAction(onPressed: (context){
-                      // deleteItem(item.id);
+                      deleteItem(item.id);
                     },
                     backgroundColor: Colors.red, foregroundColor: Colors.white, icon: Icons.delete,
-                    label: 'Delete', spacing: 8,
+                    // label: 'Delete',
+                    spacing: 8,
                   ),
                   SlidableAction(
                         onPressed: (context) {
@@ -185,7 +186,7 @@ class _HomeState extends State<Home> {
                         backgroundColor: Colors.yellow,
                         foregroundColor: Colors.white,
                         icon: Icons.edit,
-                        label: 'Edit',
+                        // label: 'Edit',
                         spacing: 8,
                       ),
                 ]
