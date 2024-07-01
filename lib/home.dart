@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Package untuk Firebase Firestore
 import 'package:flutter/material.dart'; // Package dasar dari Flutter
 import 'package:flutter/widgets.dart';
+import 'package:warkopibadah/widget/bottomnavbar.dart';
 import 'item.dart'; // File dengan definisi kelas Item
 import 'package:flutter_slidable/flutter_slidable.dart'; // Package untuk item slideable
 import 'reusablecode.dart';
@@ -269,6 +270,7 @@ class _HomeState extends State<Home> {
             ))
         ],
       ),
+      // bottomNavigationBar: const BottomNavigationbar()
     );
   }
 
