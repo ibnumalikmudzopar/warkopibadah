@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Package untuk Firebase Firestore
 import 'package:flutter/material.dart'; // Package dasar dari Flutter
-import 'package:flutter/widgets.dart';
-import 'package:warkopibadah/widget/bottomnavigation.dart';
 import 'package:warkopibadah/item.dart'; // File dengan definisi kelas Item
 import 'package:flutter_slidable/flutter_slidable.dart'; // Package untuk item slideable
 import 'package:warkopibadah/reusablecode.dart';
-import 'package:warkopibadah/widget/appbar.dart';
 
 // Konstanta untuk nama koleksi di Firestore
 const COLLECTION_NAME = 'barang_items';

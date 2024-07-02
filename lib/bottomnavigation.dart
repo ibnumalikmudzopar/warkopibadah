@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'barang.dart';
-import 'belanja.dart';
-import 'pesan.dart';
+import 'screens/barang.dart';
+import 'screens/belanja.dart';
+import 'screens/pesan.dart';
+import 'screens/profile.dart';
 
 class BottomNavigation extends StatefulWidget {
   @override
@@ -13,7 +14,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
   final List<Widget> _children = [
     BarangScreen(title: 'Warung Kopi Ibadah',),
     BelanjaScreen(),
-    PesanScreen()
+    PesanScreen(),
+    ProfileScreen()
   ];
 
   void onTabTapped(int index) {
@@ -27,6 +29,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
     return Scaffold(
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.black, // Warna item terpilih
+        unselectedItemColor: Colors.grey, // Warna item tidak terpilih
         onTap: onTabTapped,
         currentIndex: _currentIndex,
         items: [
@@ -41,6 +46,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
             label: 'Pesan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_2),
+            label: 'Profile',
           ),
         ],
       ),

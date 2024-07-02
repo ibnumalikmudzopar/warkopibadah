@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:warkopibadah/firebase_options.dart';
 import 'home.dart';
+import 'widget_tree.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Pastikan binding widget sudah diinisialisasi
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Home(title: 'Warkop Ibadah'),
+      home: WidgetTree(),
     );
   }
 }
