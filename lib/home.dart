@@ -256,8 +256,8 @@ class _HomeState extends State<Home> {
                   children: [
                     TableRow(
                       children: [
-                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text((index + 1).toString()),),)),
-                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.name),),)),
+                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.all( 7.0), child: Text((index + 1).toString()),),)),
+                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.only(left: 7.0), child: Text(item.name),),)),
                         TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.hargapcs),),)),
                         TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.hargapak),),)),
                       ],
