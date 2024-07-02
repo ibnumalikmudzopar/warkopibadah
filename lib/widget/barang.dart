@@ -10,3 +10,4 @@ class BarangScreen extends StatelessWidget {
 }
 
 // move code home.dart ke sini
+// buat folder screen dan pindahkan barang,belanja dan pesan.dart 
