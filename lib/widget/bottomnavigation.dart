@@ -11,7 +11,7 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   int _currentIndex = 0;
   final List<Widget> _children = [
-    BarangScreen(),
+    BarangScreen(title: 'Warung Kopi Ibadah',),
     BelanjaScreen(),
     PesanScreen()
   ];

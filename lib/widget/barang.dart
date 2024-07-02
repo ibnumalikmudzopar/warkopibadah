@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Package untuk Firebase Firestore
 import 'package:flutter/material.dart'; // Package dasar dari Flutter
 import 'package:flutter/widgets.dart';
-import 'package:warkopibadah/widget/bottomnavbar.dart';
-import 'item.dart'; // File dengan definisi kelas Item
+import 'package:warkopibadah/widget/bottomnavigation.dart';
+import 'package:warkopibadah/item.dart'; // File dengan definisi kelas Item
 import 'package:flutter_slidable/flutter_slidable.dart'; // Package untuk item slideable
-import 'reusablecode.dart';
-import 'widget/appbar.dart';
-
+import 'package:warkopibadah/reusablecode.dart';
+import 'package:warkopibadah/widget/appbar.dart';
 
 // Konstanta untuk nama koleksi di Firestore
 const COLLECTION_NAME = 'barang_items';
@@ -112,7 +111,7 @@ class _BarangScreenState extends State<BarangScreen> {
     sortItemsByName();
     List<Item> filteredItems = getFilteredItems(); // Dapatkan item yang sudah difilter
     return Scaffold(
-      appBar: const MyAppBar(title: 'Warkop Ibadah'),
+      // appBar: const MyAppBar(title: 'Warkop Ibadah'),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -256,8 +255,8 @@ class _BarangScreenState extends State<BarangScreen> {
                   children: [
                     TableRow(
                       children: [
-                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text((index + 1).toString()),),)),
-                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.name),),)),
+                        TableCell(child: Center(child: Padding(padding: const EdgeInsets.all( 7.0), child: Text((index + 1).toString()),),)),
+                        TableCell(child: Align(alignment:Alignment.centerLeft, child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.name),),)),
                         TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.hargapcs),),)),
                         TableCell(child: Center(child: Padding(padding: const EdgeInsets.all(7.0), child: Text(item.hargapak),),)),
                       ],
@@ -505,7 +504,3 @@ addItem(String name, String hargapcs, String hargapak, String kategori, String m
   }
 
 }
-
-
-// move code home.dart ke sini
-// buat folder screen dan pindahkan barang,belanja dan pesan.dart 
