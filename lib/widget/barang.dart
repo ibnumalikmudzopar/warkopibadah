@@ -14,15 +14,15 @@ const List<String> kategoriList = ['Semua Kategori', 'ATK', 'Rokok', 'Pindang', 
 // Buat variabel baru untuk kategori tanpa "Semua Kategori"
 final List<String> filteredKategoriList = kategoriList.where((kategori) => kategori != 'Semua Kategori').toList();
 
-class Home extends StatefulWidget {
-  const Home({super.key, required this.title});
+class BarangScreen extends StatefulWidget {
+  const BarangScreen({super.key, required this.title});
 
   final String title;
   @override
-  _HomeState createState() => _HomeState();
+  _BarangScreenState createState() => _BarangScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _BarangScreenState extends State<BarangScreen> {
   List<Item> barangItems = []; // Daftar barang
   String selectedKategori = 'Semua Kategori';
   TextEditingController searchController = TextEditingController();
