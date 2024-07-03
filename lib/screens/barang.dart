@@ -131,7 +131,7 @@ class _BarangScreenState extends State<BarangScreen> {
                     icon: Icon(isSearching ? Icons.close : Icons.search),
                   ),
 // wrap dropdownbutton pake dropdownbuttonhideunderline
-// wrap dropdownbuttonhidenderline pake container lalu border.allcolor
+// wrap dropdownbuttonhidenderline pake container lalu border.allcolor dan borderradius
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButton<String>(
