@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-
 class BelanjaScreen extends StatefulWidget {
   @override
   _BelanjaScreenState createState() => _BelanjaScreenState();
 }
 
 class _BelanjaScreenState extends State<BelanjaScreen> {
-  PageController _pageController;
+  late PageController _pageController;
   DateTime _currentDate = DateTime.now();
 
   @override
@@ -30,10 +29,29 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
         },
         itemBuilder: (context, index) {
           DateTime date = DateTime(_currentDate.year, index + 1);
-          return _buildMonthView(date);
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  _getMonthName(date.month),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(child: _buildMonthView(date)),
+            ],
+          );
         },
       ),
     );
+  }
+
+  String _getMonthName(int month) {
+    List<String> monthNames = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    return monthNames[month - 1];
   }
 
   Widget _buildMonthView(DateTime date) {
@@ -63,6 +81,10 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
 
     // Tambahkan tanggal
     for (int i = 1; i <= daysInMonth; i++) {
+      bool isToday = date.year == DateTime.now().year &&
+          date.month == DateTime.now().month &&
+          i == DateTime.now().day;
+      
       dayWidgets.add(
         GestureDetector(
           onTap: () {
@@ -73,8 +95,12 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
             margin: EdgeInsets.all(2.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
+              color: isToday ? Colors.red.shade100 : Colors.transparent,
             ),
-            child: Text('$i'),
+            child: Text(
+              '$i',
+              style: TextStyle(color: isToday ? Colors.red : Colors.black),
+            ),
           ),
         ),
       );

@@ -420,8 +420,12 @@ showUpdateDialog(String id, String currentName, String currentHargapcs, String c
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           Column(
-            child: const Text('Item Detail',style: TextStyle(fontSize: 20)),),
+           
+            Column(
+              children: [
+                Text('Item Detail', style: TextStyle(fontSize: 20)),
+              ],
+            ),
             TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Nama Barang')),
             TextField(controller: hargapcsController, decoration: const InputDecoration(labelText: 'Harga Barang / pcs')),
             TextField(controller: hargapakController, decoration: const InputDecoration(labelText: 'Harga Barang / pak')),
