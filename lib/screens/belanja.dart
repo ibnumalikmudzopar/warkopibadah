@@ -21,9 +21,6 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Calendar with Expenses'),
-      ),
       body: PageView.builder(
         controller: _pageController,
         onPageChanged: (index) {
