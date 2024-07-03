@@ -306,7 +306,8 @@ class _BarangScreenState extends State<BarangScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Detail Barang', style: TextStyle(fontSize: 20)),
+                 Center(
+                  child: const Text('Detail Barang', style: TextStyle(fontSize: 20)),),
                   const SizedBox(height: 20),
                   TextField(
                     controller: nameController,
