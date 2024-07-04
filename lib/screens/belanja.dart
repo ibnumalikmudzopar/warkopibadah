@@ -72,7 +72,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
     }
 
     int daysInMonth = DateUtils.getDaysInMonth(date.year, date.month);
-    int firstWeekday = DateTime(date.year, date.month, 1).weekday % 7; // Adjusting to start from Monday
+    int firstWeekday = DateTime(date.year, date.month, 1).weekday - 1; // Adjusting to start from Monday
 
     // Tambahkan kotak kosong untuk hari sebelum tanggal 1
     for (int i = 0; i < firstWeekday; i++) {
