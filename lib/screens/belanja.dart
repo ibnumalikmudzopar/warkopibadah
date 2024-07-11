@@ -65,7 +65,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
           alignment: Alignment.center,
           child: Text(
             day,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
       );
@@ -84,7 +84,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
       bool isToday = date.year == DateTime.now().year &&
           date.month == DateTime.now().month &&
           i == DateTime.now().day;
-      
+
       dayWidgets.add(
         GestureDetector(
           onTap: () {
@@ -97,9 +97,37 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
               border: Border.all(color: Colors.grey),
               color: isToday ? Colors.red.shade100 : Colors.transparent,
             ),
-            child: Text(
-              '$i',
-              style: TextStyle(color: isToday ? Colors.red : Colors.black),
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      '$i',
+                      style: TextStyle(color: isToday ? Colors.red : Colors.white),
+                    ),
+                  ),
+                ),
+                if (i == 11 || i == 7) // Contoh untuk menambahkan ikon bulat
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 24.0,
+                      height: 24.0,
+                      decoration: BoxDecoration(
+                        color: i == 11 ? Colors.red : Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '1',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
