@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:warkopibadah/firebase_options.dart';
-import 'home.dart';
 import 'widget_tree.dart';
 
 void main() async {

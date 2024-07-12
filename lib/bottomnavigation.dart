@@ -18,6 +18,13 @@ class _BottomNavigationState extends State<BottomNavigation> {
     ProfileScreen()
   ];
 
+  final List<String> _appBarTitles = [
+    'Warung Kopi Ibadah',
+    'Daftar Belanja',
+    'Pesan',
+    'Profile',
+  ];
+
   void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -27,6 +34,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(_appBarTitles[_currentIndex]),
+      ),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
@@ -56,3 +66,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     );
   }
 }
+
+/*
+appBar: const MyAppBar(title: 'Warkop Ibadah'),
+*/

@@ -15,7 +15,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(title: 'Warkop Ibadah'),
       body: BottomNavigation()
       // bottomNavigationBar: const BottomNavigationbar()
     );
