@@ -23,6 +23,16 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
   // banyaknya: 2,
   // tanggal: time.now()
   /*
+/*
+1. buat collection belanja_items (items ganti jadi apalah)
+2. get item.id dari barang_items
+   add to belanja_items
+     item.id
+     jumlahBelanjaController...
+     tanggalController or dateTime.now()
+3. get belanja_items
+   show on tabel or ...
+*/
   Metode untuk menambahkan barang baru ke Firestore
   addItem(String name, String hargapcs, String hargapak, String kategori, String modal) {
     var item = Item(id: 'id', name: name, hargapcs: hargapcs, hargapak: hargapak, kategori: kategori, modal: modal);
