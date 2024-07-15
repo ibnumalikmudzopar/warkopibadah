@@ -15,7 +15,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     BarangScreen(title: 'Warung Kopi Ibadah',),
     BelanjaScreen(),
     PesanScreen(),
-    ProfileScreen()
+    ProfileScreen(),
   ];
 
   final List<String> _appBarTitles = [

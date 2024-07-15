@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:warkopibadah/screens/addbelanja.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add this line
+import 'package:intl/intl.dart'; // Add this line
 
 class BelanjaScreen extends StatefulWidget {
   BelanjaScreen({Key? key}) : super(key: key);
@@ -27,7 +25,9 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
 
     return Scaffold(
       body: showForm
-         ? _buildForm()
+         ? SingleChildScrollView( // Add this widget
+            child: _buildForm(),
+          )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -158,26 +158,35 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
             ],
           ),
           SizedBox(height: 10),
-          SingleChildScrollView(
-          scrollDirection: Axis.vertical, // Add this line
-          child: DataTable(
-            columns: [
-              DataColumn(label: Text('Nama Belanja')),
-              DataColumn(label: Text('Jumlah')),
-            ],
-            rows: _belanjaList
-               .map(
-                  (belanja) => DataRow(
-                    cells: [
-                      DataCell(Text(belanja['nama'])),
-                      DataCell(Text(belanja['jumlah'].toString())),
-                    ],
-                  ),
-                )
-               .toList(),
+          Container(
+            height: 200,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical, // Add this line
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text('Nama Belanja')),
+                  DataColumn(label: Text('Jumlah')),
+                ],
+                rows: _belanjaList
+                   .map(
+                      (belanja) => DataRow(
+                        cells: [
+                          DataCell(Text(belanja['nama'])),
+                          DataCell(Text(belanja['jumlah'].toString())),
+                        ],
+                      ),
+                    )
+                   .toList(),
+              ),
+            
+                    ),
           ),
-        ),
           SizedBox(height: 10),
+          ElevatedButton(onPressed: (){
+            setState(() {
+              _belanjaList.clear();
+            });
+          }, child: Text("Reset")),
           ElevatedButton(
             onPressed: (){},
             child: Text('Submit to Firebase'),
