@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart'; // Add this line
 
 class BelanjaScreen extends StatefulWidget {
   BelanjaScreen({Key? key}) : super(key: key);
@@ -12,40 +10,24 @@ class BelanjaScreen extends StatefulWidget {
 
 class _BelanjaScreenState extends State<BelanjaScreen> {
   final List<String> daysOfWeek = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-  bool showForm = false;
-  final _formKey = GlobalKey<FormState>();
-  String _namaBelanja = '';
-  int _jumlah = 0;
-  List<Map<String, dynamic>> _belanjaList = [];
-  final TextEditingController _typeAheadController = TextEditingController();
-
-    Future<List<String>> fetchSuggestions(String query) async {
-    List<String>? suggestions = [];
-
-    var snapshot = await FirebaseFirestore.instance
-      .collection('barang_items')
-      .where('name', isGreaterThanOrEqualTo: query)
-      .where('name', isLessThan: query + 'z')
-      .limit(5)
-      .get();
-
-    suggestions = snapshot.docs.map((doc) => doc.data()['name']).cast<String>().toList();
-
-    return suggestions;
-  }
+  bool showForm = false; // Menyimpan status apakah form ditampilkan atau tidak
+  final _formKey = GlobalKey<FormState>(); // Add this line
+  String _namaBelanja = ''; // Add this line
+  int _jumlah = 0; // Add this line
+  List<Map<String, dynamic>> _belanjaList = []; // Add this line
 
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String monthName = DateFormat.yMMMM().format(now);
     DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-    int startWeekday = firstDayOfMonth.weekday % 7;
+    int startWeekday = firstDayOfMonth.weekday % 7; // 0 untuk Minggu, 1 untuk Senin, dst.
 
     return Scaffold(
       body: showForm
-          ? SingleChildScrollView(
-              child: _buildForm(),
-            )
+         ? SingleChildScrollView( // Add this widget
+            child: _buildForm(),
+          )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -84,8 +66,8 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                             DateFormat.d().format(date),
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                              color: isToday ? Colors.red : Colors.black,
+                              fontWeight: isToday? FontWeight.bold : FontWeight.normal,
+                              color: isToday? Colors.red : Colors.black,
                             ),
                           ),
                         );
@@ -111,9 +93,6 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
     );
   }
 
-
-
-
   Widget _buildForm() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -123,14 +102,14 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
             height: 300,
             width: 500,
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+              scrollDirection: Axis.vertical, // Add this line
               child: DataTable(
                 columns: [
                   DataColumn(label: Text('Nama Barang')),
                   DataColumn(label: Text('Jumlah')),
                 ],
                 rows: _belanjaList
-                    .map(
+                   .map(
                       (belanja) => DataRow(
                         cells: [
                           DataCell(Text(belanja['nama'])),
@@ -138,123 +117,108 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                         ],
                       ),
                     )
-                    .toList(),
+                   .toList(),
               ),
-            ),
+            
+                    ),
           ),
           SizedBox(height: 10),
           Row(
             children: [
+              ElevatedButton(onPressed: (){
+                setState(() {
+                  _belanjaList.clear();
+                });
+              }, child: Text("Reset")),
               ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _belanjaList.clear();
-                  });
-                },
-                child: Text("Reset"),
-              ),
-              ElevatedButton(
-                onPressed: () {},
+                onPressed: (){},
                 child: Text('Submit to Firebase'),
               ),
+              
             ],
           ),
           Row(
-            children: [
+            children: [ 
               ElevatedButton(
                 onPressed: _showAddBarangDialog,
-                child: Text("Tambah"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    showForm = false;
-                  });
-                },
-                child: Text("Kembali"),
-              ),
-            ],
-          ),
-        ],
+                child: Text("Tambah")),
+              ElevatedButton(onPressed: (){
+                setState(() {
+                  showForm = false;
+                });
+              }, child: Text("Kembali"))
+            ]
+          )
+    ],
       ),
     );
   }
 
   void _showAddBarangDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Tambah Belanja'),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  onChanged: (value) async {
-                    // Panggil fungsi fetchSuggestions saat nilai input berubah
-                    List<String> suggestions = await fetchSuggestions(value);
-                    // Update UI dengan suggestions
-                    // Misalnya, gunakan ListView.builder untuk menampilkan suggestions
-                  },
-                  // Tambahkan parameter lain sesuai kebutuhan (controller, decoration, dll.)
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Tambah Belanja'),
+        content: Form(
+          key: _formKey, // Add this line
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Nama Belanja',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Jumlah',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter jumlah';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => setState(() => _jumlah = int.parse(value!)),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter nama belanja';
+                  }
+                  return null;
+                },
+                onSaved: (value) => setState(() => _namaBelanja = value!), // Update this line
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Jumlah',
+                  border: OutlineInputBorder(),
                 ),
-              ],
-            ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter jumlah';
+                  }
+                  return null;
+                },
+                onSaved: (value) => setState(() => _jumlah = int.parse(value!)), // Update this line
+              ),
+            ],
           ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                setState(() {
+                  _belanjaList.add({'nama': _namaBelanja, 'jumlah': _jumlah});
+                });
                 Navigator.of(context).pop();
-              },
-              child: Text('Batal'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  setState(() {
-                    _belanjaList.add({'nama': _namaBelanja, 'jumlah': _jumlah});
-                  });
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text('Tambah'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<List<String>> _getSuggestionsFromFirestore(String query) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-       .collection('barang_items')
-       .where('name', isGreaterThanOrEqualTo: query.toLowerCase())
-       .get();
-
-    List<String> suggestions = [];
-    for (var doc in snapshot.docs) {
-      suggestions.add(doc['name']);
-    }
-    return suggestions;
-  }
-
+              }
+            },
+            child: Text('Tambah'),
+          ),
+        ],
+      );
+    },
+  );
+}
   int daysInMonth(DateTime date) {
     var firstDayThisMonth = DateTime(date.year, date.month, 1);
     var firstDayNextMonth = DateTime(firstDayThisMonth.year, firstDayThisMonth.month + 1, 1);
