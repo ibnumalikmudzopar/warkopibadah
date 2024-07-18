@@ -76,17 +76,17 @@ class _BarangScreenState extends State<BarangScreen> {
   // }
  
   List<Item> getFilteredItems() {
-  List<Item> items = barangItems;
-  if (selectedKategori != 'Semua Kategori') {
-    items = items.where((item) => item.kategori == selectedKategori).toList();
+    List<Item> items = barangItems;
+    if (selectedKategori != 'Semua Kategori') {
+      items = items.where((item) => item.kategori == selectedKategori).toList();
+    }
+    if (searchController.text.isNotEmpty) {
+      items = items.where((item) =>
+        item.name.toLowerCase().contains(searchController.text.toLowerCase())
+      ).toList();
+    }
+    return items;
   }
-  if (searchController.text.isNotEmpty) {
-    items = items.where((item) =>
-      item.name.toLowerCase().contains(searchController.text.toLowerCase())
-    ).toList();
-  }
-  return items;
-}
 
 
   // Metode untuk mengurutkan barangItems berdasarkan nama barang

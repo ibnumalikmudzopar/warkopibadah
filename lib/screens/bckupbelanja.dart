@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Add this line
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BelanjaScreen extends StatefulWidget {
   BelanjaScreen({Key? key}) : super(key: key);
@@ -10,24 +11,115 @@ class BelanjaScreen extends StatefulWidget {
 
 class _BelanjaScreenState extends State<BelanjaScreen> {
   final List<String> daysOfWeek = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-  bool showForm = false; // Menyimpan status apakah form ditampilkan atau tidak
-  final _formKey = GlobalKey<FormState>(); // Add this line
-  String _namaBelanja = ''; // Add this line
-  int _jumlah = 0; // Add this line
-  List<Map<String, dynamic>> _belanjaList = []; // Add this line
+  bool showForm = false;
+  final _formKey = GlobalKey<FormState>();
+  String _namaBelanja = '';
+  int _jumlah = 0;
+  List<Map<String, dynamic>> _belanjaList = [];
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  OverlayEntry? _overlayEntry;
+  List<String> _suggestions = [];
+  bool _isLoading = false;
+  final LayerLink _layerLink = LayerLink();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        _removeOverlay();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  Future<List<String>> fetchSuggestions(String query) async {
+    List<String> suggestions = [];
+    var snapshot = await FirebaseFirestore.instance
+        .collection('barang_items')
+        .where('name', isGreaterThanOrEqualTo: query)
+        .where('name', isLessThan: query + 'z')
+        .limit(5)
+        .get();
+
+    suggestions = snapshot.docs.map((doc) => doc.data()['name'] as String).toList();
+    return suggestions;
+  }
+
+  void _updateSuggestions(String query) async {
+    setState(() {
+      _isLoading = true;
+    });
+    final suggestions = await fetchSuggestions(query);
+    setState(() {
+      _isLoading = false;
+      _suggestions = suggestions;
+      _showOverlay();
+    });
+  }
+
+  void _showOverlay() {
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    var size = renderBox.size;
+    return OverlayEntry(
+      builder: (context) => Positioned(
+        width: size.width,
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          offset: Offset(0, size.height + 5.0),
+          child: Material(
+            elevation: 4.0,
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              itemCount: _suggestions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_suggestions[index]),
+                  onTap: () {
+                    _controller.text = _suggestions[index];
+                    _namaBelanja = _suggestions[index];
+                    _removeOverlay();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String monthName = DateFormat.yMMMM().format(now);
     DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-    int startWeekday = firstDayOfMonth.weekday % 7; // 0 untuk Minggu, 1 untuk Senin, dst.
+    int startWeekday = firstDayOfMonth.weekday % 7;
 
     return Scaffold(
       body: showForm
-         ? SingleChildScrollView( // Add this widget
-            child: _buildForm(),
-          )
+          ? SingleChildScrollView(
+              child: _buildForm(),
+            )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -66,8 +158,8 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                             DateFormat.d().format(date),
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: isToday? FontWeight.bold : FontWeight.normal,
-                              color: isToday? Colors.red : Colors.black,
+                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                              color: isToday ? Colors.red : Colors.black,
                             ),
                           ),
                         );
@@ -102,14 +194,14 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
             height: 300,
             width: 500,
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical, // Add this line
+              scrollDirection: Axis.vertical,
               child: DataTable(
                 columns: [
                   DataColumn(label: Text('Nama Barang')),
                   DataColumn(label: Text('Jumlah')),
                 ],
                 rows: _belanjaList
-                   .map(
+                    .map(
                       (belanja) => DataRow(
                         cells: [
                           DataCell(Text(belanja['nama'])),
@@ -117,108 +209,119 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                         ],
                       ),
                     )
-                   .toList(),
+                    .toList(),
               ),
-            
-                    ),
+            ),
           ),
           SizedBox(height: 10),
           Row(
             children: [
-              ElevatedButton(onPressed: (){
-                setState(() {
-                  _belanjaList.clear();
-                });
-              }, child: Text("Reset")),
               ElevatedButton(
-                onPressed: (){},
+                onPressed: () {
+                  setState(() {
+                    _belanjaList.clear();
+                  });
+                },
+                child: Text("Reset"),
+              ),
+              ElevatedButton(
+                onPressed: () {},
                 child: Text('Submit to Firebase'),
               ),
-              
             ],
           ),
           Row(
-            children: [ 
+            children: [
               ElevatedButton(
                 onPressed: _showAddBarangDialog,
-                child: Text("Tambah")),
-              ElevatedButton(onPressed: (){
-                setState(() {
-                  showForm = false;
-                });
-              }, child: Text("Kembali"))
-            ]
-          )
-    ],
+                child: Text("Tambah"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    showForm = false;
+                  });
+                },
+                child: Text("Kembali"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   void _showAddBarangDialog() async {
-  await showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text('Tambah Belanja'),
-        content: Form(
-          key: _formKey, // Add this line
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Nama Belanja',
-                  border: OutlineInputBorder(),
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Tambah Belanja'),
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CompositedTransformTarget(
+                  link: _layerLink,
+                  child: TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    onChanged: (value) {
+                      if (value.isNotEmpty) {
+                        _updateSuggestions(value);
+                      } else {
+                        _removeOverlay();
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Ketik Nama Barang',
+                      suffixIcon: _isLoading ? CircularProgressIndicator() : null,
+                    ),
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter nama belanja';
-                  }
-                  return null;
-                },
-                onSaved: (value) => setState(() => _namaBelanja = value!), // Update this line
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Jumlah',
-                  border: OutlineInputBorder(),
+                SizedBox(height: 10),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Jumlah',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter jumlah';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => setState(() => _jumlah = int.parse(value!)),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter jumlah';
-                  }
-                  return null;
-                },
-                onSaved: (value) => setState(() => _jumlah = int.parse(value!)), // Update this line
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                setState(() {
-                  _belanjaList.add({'nama': _namaBelanja, 'jumlah': _jumlah});
-                });
+          actions: [
+            ElevatedButton(
+              onPressed: () {
                 Navigator.of(context).pop();
-              }
-            },
-            child: Text('Tambah'),
-          ),
-        ],
-      );
-    },
-  );
-}
+              },
+              child: Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  setState(() {
+                    _belanjaList.add({'nama': _namaBelanja, 'jumlah': _jumlah});
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text('Tambah'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   int daysInMonth(DateTime date) {
     var firstDayThisMonth = DateTime(date.year, date.month, 1);
     var firstDayNextMonth = DateTime(firstDayThisMonth.year, firstDayThisMonth.month + 1, 1);
