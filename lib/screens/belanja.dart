@@ -224,6 +224,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                 SizedBox(height: 10),
                 // TypeAheadField untuk memberikan saran nama barang berdasarkan input pengguna
                 TypeAheadField(
+                  
                   itemBuilder: (context, suggestion) {
                     return ListTile(
                       title: Text(suggestion.toString()),
