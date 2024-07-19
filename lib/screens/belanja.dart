@@ -23,6 +23,8 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
   List<Map<String, dynamic>> _belanjaList = []; // List untuk menyimpan daftar barang belanja yang akan ditampilkan di DataTable
   List<String> _namaBarang = []; // List untuk menyimpan nama barang dari Firestore untuk saran autocomplete
   final TextEditingController searchNamaBarangController = TextEditingController(); // Controller untuk field pencarian nama barang
+  bool showDetail = false; // Status untuk menampilkan atau menyembunyikan detail belanja
+  DateTime? selectedDate; // Variabel untuk menyimpan tanggal yang dipilih untuk detail belanja
 
   @override
   void initState() {
@@ -60,76 +62,140 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
     String monthName = DateFormat.yMMMM().format(now); // Format bulan dan tahun saat ini
     DateTime firstDayOfMonth = DateTime(now.year, now.month, 1); // Tanggal pertama dalam bulan saat ini
     int startWeekday = firstDayOfMonth.weekday % 7; // Hari dalam seminggu saat bulan dimulai
+    
+
 
     return Scaffold(
-      body: showForm
-          ? SingleChildScrollView(
-              child: _buildForm(), // Tampilkan form jika showForm true
-            )
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    monthName,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: daysOfWeek.map((day) => Expanded(
-                          child: Center(
-                            child: Text(day, style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        )).toList(),
-                  ),
-                  SizedBox(height: 10),
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 7,
-                      ),
-                      itemCount: daysInMonth(now) + startWeekday,
-                      itemBuilder: (context, index) {
-                        if (index < startWeekday) {
-                          return Center(
-                            child: Text(''),
-                          );
-                        }
-                        DateTime date = DateTime(now.year, now.month, index - startWeekday + 1);
-                        bool isToday = date.day == now.day && date.month == now.month && date.year == now.year;
-                        return Center(
-                          child: Text(
-                            DateFormat.d().format(date),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                              color: isToday ? Colors.red : Colors.black,
+    body: showDetail
+        ? _buildDetailBelanja() // Tampilkan detail belanja jika showDetail true
+        : showForm
+            ? SingleChildScrollView(
+                child: _buildForm(),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      monthName,
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: daysOfWeek.map((day) => Expanded(
+                            child: Center(
+                              child: Text(day, style: TextStyle(fontWeight: FontWeight.bold)),
                             ),
-                          ),
-                        );
-                      },
+                          )).toList(),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          showForm = true; // Tampilkan form saat tombol add ditekan
-                        });
-                      },
-                      child: Icon(Icons.add),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                        ),
+                        itemCount: daysInMonth(now) + startWeekday,
+                        itemBuilder: (context, index) {
+                          if (index < startWeekday) {
+                            return Center(child: Text(''));
+                          }
+                          DateTime date = DateTime(now.year, now.month, index - startWeekday + 1);
+                          bool isToday = date.day == now.day && date.month == now.month && date.year == now.year;
+                          return GestureDetector(
+                            onTap: () => _showDetailBelanja(date),
+                            child: Center(
+                              child: Text(
+                                DateFormat.d().format(date),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                                  color: isToday ? Colors.red : Colors.black,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                ],
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            showForm = true;
+                          });
+                        },
+                        child: Icon(Icons.add),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
     );
   }
+
+  Widget _buildDetailBelanja() {
+  return FutureBuilder(
+    future: _fetchBelanjaData(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else {
+        var belanjaList = snapshot.data as List<Map<String, dynamic>>;
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                'Detail Belanja ${DateFormat.yMMMMd().format(selectedDate!)}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: belanjaList.length,
+                  itemBuilder: (context, index) {
+                    var item = belanjaList[index];
+                    return ListTile(
+                      title: Text(item['name']),
+                      subtitle: Text('Jumlah: ${item['jumlah']}'),
+                    );
+                  },
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    showDetail = false; // Kembali ke tampilan utama
+                    selectedDate = null; // Reset tanggal yang dipilih
+                  });
+                },
+                child: Text('Kembali'),
+              ),
+            ],
+          ),
+        );
+      }
+    },
+  );
+}
+
+Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
+  String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate!);
+  var querySnapshot = await FirebaseFirestore.instance
+      .collection('belanja_items')
+      .doc(formattedDate)
+      .collection('items')
+      .get();
+  return querySnapshot.docs.map((doc) => doc.data()).toList();
+}
+
 
   // Widget untuk membangun form penambahan barang belanja
   Widget _buildForm() {
@@ -144,16 +210,20 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
               scrollDirection: Axis.vertical,
               child: DataTable(
                 columns: [
+                  DataColumn(label: Text('No.')), // Kolom untuk nomor urut
                   DataColumn(label: Text('Nama Barang')), // Kolom untuk nama barang
                   DataColumn(label: Text('Jumlah')), // Kolom untuk jumlah barang
                 ],
                 rows: _belanjaList
-                    .map(
-                      (belanja) => DataRow(
-                        cells: [
-                          DataCell(Text(belanja['nama'])), // Sel untuk nama barang
-                          DataCell(Text(belanja['jumlah'].toString())), // Sel untuk jumlah barang
-                        ],
+                .asMap()
+                .entries
+                .map(
+                  (entry) => DataRow(
+                    cells: [
+                      DataCell(Text((entry.key + 1).toString())), // Sel untuk nomor urut
+                      DataCell(Text(entry.value['nama'])), // Sel untuk nama barang
+                      DataCell(Text(entry.value['jumlah'].toString())), // Sel untuk jumlah barang
+                    ],
                       ),
                     )
                     .toList(),
@@ -193,6 +263,14 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
     );
   }
 
+  void _showDetailBelanja(DateTime date) {
+  setState(() {
+    selectedDate = date; // Simpan tanggal yang dipilih
+    showDetail = true; // Tampilkan detail belanja
+  });
+}
+
+
   // Fungsi untuk menampilkan dialog penambahan barang belanja
   void _showAddBarangDialog() async {
     await showDialog(
@@ -205,26 +283,20 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // TextFormField(
-                //   controller: searchNamaBarangController,
-                //   decoration: InputDecoration(
-                //     labelText: 'Nama Belanja',
-                //     border: OutlineInputBorder(),
-                //   ),
-                //   onChanged: (value) {
-                //     setState(() {});
-                //   },
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter nama belanja';
-                //     }
-                //     return null;
-                //   },
-                // ),
                 SizedBox(height: 10),
                 // TypeAheadField untuk memberikan saran nama barang berdasarkan input pengguna
                 TypeAheadField(
-                  
+                  builder: (context, searchNamaBarangcontroller, focusNode){
+                    return TextField(
+                      controller: searchNamaBarangcontroller,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Nama Barang',
+                      ),
+                    );
+                  },
                   itemBuilder: (context, suggestion) {
                     return ListTile(
                       title: Text(suggestion.toString()),
@@ -233,7 +305,8 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                   onSelected: (suggestion) {
                     setState(() {
                       _namaBelanja = suggestion.toString(); // Update _namaBelanja dengan pilihan pengguna
-                      searchNamaBarangController.text = suggestion.toString(); // Update controller untuk field pencarian
+                      searchNamaBarangController.text = _namaBelanja; // Update controller untuk field pencarian
+                      
                     });
                   },
                   suggestionsCallback: (pattern) async {
@@ -289,14 +362,60 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
     );
   }
 
-  // Fungsi untuk mengirimkan data barang belanja ke Firestore
+  // // Fungsi untuk mengirimkan data barang belanja ke Firestore
+  // void submitToFirebase() {
+  //   _belanjaList.forEach((belanja) {
+  //     FirebaseFirestore.instance.collection('belanja_items').add({
+  //       'name': belanja['nama'],
+  //       'jumlah': belanja['jumlah'],
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //     });
+  //   });
+  // }
+
+  // void submitToFirebase() {
+  // String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  // CollectionReference belanjaCollection = FirebaseFirestore.instance.collection('belanja_items');
+
+  // _belanjaList.forEach((belanja) {
+  //   belanjaCollection
+  //     .doc(formattedDate) // ID dokumen adalah tanggal
+  //     .collection('items') // Subkoleksi 'items'
+  //     .add({
+  //       'name': belanja['nama'],
+  //       'jumlah': belanja['jumlah'],
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //     });
+  // });
+  // }
+
   void submitToFirebase() {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    CollectionReference belanjaCollection = FirebaseFirestore.instance.collection('belanja_items');
+
     _belanjaList.forEach((belanja) {
-      FirebaseFirestore.instance.collection('user_selections').add({
-        'name': belanja['nama'],
-        'jumlah': belanja['jumlah'],
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+      belanjaCollection
+        .doc(formattedDate) // ID dokumen adalah tanggal
+        .collection('items') // Subkoleksi 'items'
+        .add({
+          'name': belanja['nama'],
+          'jumlah': belanja['jumlah'],
+          'timestamp': FieldValue.serverTimestamp(),
+        }).then((value) {
+          // Menampilkan Snackbar ketika data berhasil ditambahkan
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Data berhasil ditambahkan!'),
+            ),
+          );
+        }).catchError((error) {
+          // Menampilkan Snackbar ketika terjadi error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Gagal menambahkan data: $error'),
+            ),
+          );
+        });
     });
   }
 
