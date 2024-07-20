@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:warkopibadah/reusablecode.dart';
 import 'auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // add this line
@@ -128,7 +129,16 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _entryField('email', _controllerEmail),
+            Text(
+              'Welcome To\nAplikasi Manajemen\nWarungKopi Ibadah',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+            SizedBox(height: 10),
+            _entryField('Email', _controllerEmail),
             _entryField('Password', _controllerPassword),
             _rememberMeCheckbox(), // add this line
             _errorMessage(),

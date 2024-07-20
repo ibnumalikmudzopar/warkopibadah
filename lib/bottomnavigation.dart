@@ -19,7 +19,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   ];
 
   final List<String> _appBarTitles = [
-    'Warung Kopi Ibadah',
+    'Daftar Barang',
     'Daftar Belanja',
     'Pesan',
     'Profile',

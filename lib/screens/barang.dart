@@ -184,7 +184,14 @@ class _BarangScreenState extends State<BarangScreen> {
                         0: FixedColumnWidth(50.0), // Kolom "No" dengan lebar tetap 50 piksel
                         1: FlexColumnWidth(1.0),
                       },
-                      border: TableBorder.all(),
+                      border: TableBorder(
+                        horizontalInside: BorderSide.none, // Contoh border horizontal
+                        verticalInside: BorderSide.none, // Menghilangkan border vertikal
+                        top: BorderSide.none, // Contoh border atas
+                        bottom: BorderSide.none, // Contoh border bawah
+                        left: BorderSide.none, // Contoh border kiri
+                        right: BorderSide.none,// Contoh border kanan
+                      ),
                       children: [
                         TableRow(
                           children: [
@@ -250,7 +257,14 @@ class _BarangScreenState extends State<BarangScreen> {
                         0: FixedColumnWidth(50.0), // Kolom "No" dengan lebar tetap 50 piksel
                         1: FlexColumnWidth(1.0),
                       },
-                  border: TableBorder.all(),
+                  border: TableBorder(
+                        horizontalInside: BorderSide.none, // Contoh border horizontal
+                        verticalInside: BorderSide.none, // Menghilangkan border vertikal
+                        top: BorderSide.none, // Contoh border atas
+                        bottom: BorderSide.none, // Contoh border bawah
+                        left: BorderSide.none, // Contoh border kiri
+                        right: BorderSide.none, // Contoh border kanan
+                    ),
                   children: [
                     TableRow(
                       children: [
@@ -423,7 +437,7 @@ showUpdateDialog(String id, String currentName, String currentHargapcs, String c
            
             Column(
               children: [
-                Text('Item Detail', style: TextStyle(fontSize: 20)),
+                Center(child: Text('Item Detail', style: TextStyle(fontSize: 20))),
               ],
             ),
             TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Nama Barang')),
