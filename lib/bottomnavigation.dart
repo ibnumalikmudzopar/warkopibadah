@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/barang.dart';
 import 'screens/belanja.dart';
+import 'screens/bontoko.dart';
 import 'screens/pesan.dart';
 import 'screens/profile.dart';
 
@@ -12,7 +13,8 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   int _currentIndex = 0;
   final List<Widget> _children = [
-    BarangScreen(title: 'Warung Kopi Ibadah',),
+    BarangScreen(title: 'Daftar Barang',),
+    Bontoko(),
     BelanjaScreen(),
     PesanScreen(),
     ProfileScreen(),
@@ -20,6 +22,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   final List<String> _appBarTitles = [
     'Daftar Barang',
+    'Harga Toko',
     'Daftar Belanja',
     'Pesan',
     'Profile',
@@ -48,6 +51,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.store),
             label: 'Barang',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.price_check),
+            label: 'Bon Toko',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),

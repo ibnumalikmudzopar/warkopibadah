@@ -118,7 +118,17 @@ class _BarangScreenState extends State<BarangScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(onPressed: showAddDialog, icon: const Icon(Icons.add)),
+                  Material(
+                    color: Colors.transparent,
+                    shape: CircleBorder(
+                      side: BorderSide(color: Colors.black, width: 0.1), // Warna dan ketebalan border
+                    ),
+                    child: IconButton(
+                      onPressed: showAddDialog,
+                      icon: const Icon(Icons.add),
+                      iconSize: 24, // Ukuran icon
+                    ),
+                  ),
                   IconButton(
                     onPressed: (){
                       setState(() {

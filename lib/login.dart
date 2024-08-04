@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:warkopibadah/reusablecode.dart';
-import 'auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // add this line
+import 'package:shared_preferences/shared_preferences.dart';
+import 'auth.dart'; // Pastikan Anda memiliki file auth.dart yang diperlukan
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -15,10 +13,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String? errorMessage = '';
   bool isLogin = true;
-  bool rememberMe = false; // add this line
+  bool rememberMe = false;
+  bool _obscureText = true; // Menyembunyikan teks secara default
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   Future<void> signInWithEmailAndPassword() async {
     try {
@@ -56,11 +61,20 @@ class _LoginPageState extends State<LoginPage> {
     return Text('Firebase Auth');
   }
 
-  Widget _entryField(String title, TextEditingController controller) {
+  Widget _entryField(String title, TextEditingController controller, {bool isPassword = false}) {
     return TextField(
       controller: controller,
+      obscureText: isPassword ? _obscureText : false, // Menyembunyikan teks jika field password
       decoration: InputDecoration(
         labelText: title,
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: _togglePasswordVisibility,
+              )
+            : null,
       ),
     );
   }
@@ -72,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _submitButton() {
     return ElevatedButton(
       onPressed: isLogin ? signInWithEmailAndPassword : createUserWithEmailAndPassword,
-      child: Text(isLogin ? 'login' : 'Register'),
+      child: Text(isLogin ? 'Login' : 'Register'),
     );
   }
 
@@ -134,13 +148,20 @@ class _LoginPageState extends State<LoginPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 30),
+            Text(
+              'Silahkan Masukan Email & Password',
+              style: TextStyle(
+                fontSize: 15,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
             _entryField('Email', _controllerEmail),
-            _entryField('Password', _controllerPassword),
-            _rememberMeCheckbox(), // add this line
+            _entryField('Password', _controllerPassword, isPassword: true),
+            _rememberMeCheckbox(),
             _errorMessage(),
             _submitButton(),
             _loginButton(),

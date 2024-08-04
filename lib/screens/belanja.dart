@@ -25,6 +25,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
   final TextEditingController searchNamaBarangController = TextEditingController(); // Controller untuk field pencarian nama barang
   bool showDetail = false; // Status untuk menampilkan atau menyembunyikan detail belanja
   DateTime? selectedDate; // Variabel untuk menyimpan tanggal yang dipilih untuk detail belanja
+  String _selectedOption = 'pak'; // Variabel untuk menyimpan nilai dropdown
 
   @override
   void initState() {
@@ -77,9 +78,11 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      monthName,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    Center(
+                      child: Text(
+                        monthName,
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
                     ),
                     SizedBox(height: 10),
                     Row(
@@ -106,13 +109,19 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                           return GestureDetector(
                             onTap: () => _showDetailBelanja(date),
                             child: Center(
-                              child: Text(
-                                DateFormat.d().format(date),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                                  color: isToday ? Colors.red : Colors.black,
-                                ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start, // Mengatur posisi teks di atas
+                                children: [
+                                  Text(
+                                    DateFormat.d().format(date),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                                      color: isToday ? Colors.blue : Colors.black,
+                                    ),
+                                  ),
+                                  Text('Done')
+                                ],
                               ),
                             ),
                           );
@@ -164,7 +173,12 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                     var item = belanjaList[index];
                     return ListTile(
                       title: Text(item['name']),
-                      subtitle: Text('Jumlah: ${item['jumlah']}'),
+                      subtitle: Column(
+                        children: [
+                          Text('Jumlah: ${item['jumlah']}'),
+                          Text('Jumlah: ${item['jumlahpak']}'),
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -212,7 +226,8 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                 columns: [
                   DataColumn(label: Text('No.')), // Kolom untuk nomor urut
                   DataColumn(label: Text('Nama Barang')), // Kolom untuk nama barang
-                  DataColumn(label: Text('Jumlah')), // Kolom untuk jumlah barang
+                  DataColumn(label: Text('Jumlah')), // Kolom untuk nama barang
+                  DataColumn(label: Text('Opsi')),// Kolom untuk jumlah barang
                 ],
                 rows: _belanjaList
                 .asMap()
@@ -222,7 +237,8 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                     cells: [
                       DataCell(Text((entry.key + 1).toString())), // Sel untuk nomor urut
                       DataCell(Text(entry.value['nama'])), // Sel untuk nama barang
-                      DataCell(Text(entry.value['jumlah'].toString())), // Sel untuk jumlah barang
+                      DataCell(Text(entry.value['jumlah'].toString())),// Sel untuk jumlah barang
+                      DataCell(Text(entry.value['opsi'])),
                     ],
                       ),
                     )
@@ -326,12 +342,33 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter jumlah';
+                      return 'Jumlah tidak boleh kosong';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Jumlah harus berupa angka';
                     }
                     return null;
                   },
                   onSaved: (value) =>
                       setState(() => _jumlah = int.parse(value!)), // Simpan jumlah barang belanja dari input pengguna
+                ),
+                DropdownButtonFormField<String>(
+                  value: _selectedOption,
+                  items: ['pak', 'runtui'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedOption = newValue!;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Opsi',
+                  ),
                 ),
               ],
             ),
@@ -349,7 +386,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                   _formKey.currentState!.save(); // Validasi dan simpan data dari form
                   setState(() {
                     _belanjaList
-                        .add({'nama': _namaBelanja, 'jumlah': _jumlah}); // Tambahkan barang belanja ke dalam _belanjaList
+                        .add({'nama': _namaBelanja, 'jumlah': _jumlah, 'opsi': _selectedOption}); // Tambahkan barang belanja ke dalam _belanjaList
                   });
                   Navigator.of(context).pop(); // Tutup dialog
                 }
@@ -400,6 +437,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
         .add({
           'name': belanja['nama'],
           'jumlah': belanja['jumlah'],
+          'jumlahpak': belanja['opsi'],
           'timestamp': FieldValue.serverTimestamp(),
         }).then((value) {
           // Menampilkan Snackbar ketika data berhasil ditambahkan
