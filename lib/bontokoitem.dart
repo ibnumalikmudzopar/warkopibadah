@@ -1,4 +1,6 @@
-import 'dart:convert'; // Import library dart:convert untuk pengolahan JSON
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import library dart:convert untuk pengolahan JSON
 
 // Fungsi untuk membuat objek Item dari JSON
 BonTokoItem itemFromJson(String str) => BonTokoItem.fromJson(json.decode(str));
@@ -11,37 +13,39 @@ String itemToJson(BonTokoItem data) => json.encode(data.toJson());
 class BonTokoItem {
   String jumlah;
   String isi;
-  String nama; // Nama barang
-  String harga;  // Harga barang
-  String kategori; // Kategori barang
-  String lastupdate; // Waktu terakhir diupdate
+  String nama;
+  String kategori;
+  String harga;
+  DateTime lastupdate;
 
   BonTokoItem({
     required this.jumlah,
     required this.isi,
     required this.nama,
-    required this.harga,
     required this.kategori,
+    required this.harga,
     required this.lastupdate,
   });
 
-  // Membuat objek Item dari JSON
-  factory BonTokoItem.fromJson(Map<String, dynamic> json) => BonTokoItem(
-        jumlah: json["jumlah"],
-        isi: json["isi"],
-        nama: json["nama"],
-        harga: json["harga"],
-        kategori: json["kategori"],
-        lastupdate: json["lastupdate"],
-      );
+  Map<String, dynamic> toJson() {
+    return {
+      'jumlah': jumlah,
+      'isi': isi,
+      'nama': nama,
+      'kategori': kategori,
+      'harga': harga,
+      'lastupdate': Timestamp.fromDate(lastupdate), // Simpan sebagai Timestamp
+    };
+  }
 
-  // Mengubah objek Item menjadi JSON
-  Map<String, dynamic> toJson() => {
-        "jumlah": jumlah,
-        "isi": isi,
-        "nama": nama,
-        "harga": harga,
-        "kategori": kategori,
-        "lastupdate": lastupdate,
-      };
+  factory BonTokoItem.fromJson(Map<String, dynamic> json) {
+    return BonTokoItem(
+      jumlah: json['jumlah'],
+      isi: json['isi'],
+      nama: json['nama'],
+      kategori: json['kategori'],
+      harga: json['harga'],
+      lastupdate: (json['lastupdate'] as Timestamp).toDate(), // Ubah dari Timestamp ke DateTime
+    );
+  }
 }
