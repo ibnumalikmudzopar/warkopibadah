@@ -2,6 +2,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:intl/intl.dart';
 // import 'package:warkopibadah/bontokoitem.dart';
+// import 'package:flutter_slidable/flutter_slidable.dart';
 
 // class Bontoko extends StatefulWidget {
 //   const Bontoko({Key? key}) : super(key: key);
@@ -14,7 +15,6 @@
 //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 //   final String _collectionName = 'bontoko_items';
 
-//   // Fungsi untuk mengubah Timestamp ke DateTime
 //   DateTime parseTimestamp(dynamic timestamp) {
 //     if (timestamp is Timestamp) {
 //       return timestamp.toDate();
@@ -56,65 +56,33 @@
 //                 child: Table(
 //                   border: TableBorder.all(color: Colors.transparent),
 //                   columnWidths: {
-//                     0: FlexColumnWidth(0.5), // No column
-//                     1: FlexColumnWidth(1.1), // Jumlah column
-//                     2: FlexColumnWidth(0.5), // Isi column
-//                     3: FlexColumnWidth(2.0), // Nama column
-//                     4: FlexColumnWidth(1.5), // Harga column
-//                     5: FlexColumnWidth(0.8), // Lastupdate column
+//                     0: FlexColumnWidth(0.5),
+//                     1: FlexColumnWidth(1.1),
+//                     2: FlexColumnWidth(0.5),
+//                     3: FlexColumnWidth(2.0),
+//                     4: FlexColumnWidth(1.5),
+//                     5: FlexColumnWidth(0.8),
 //                   },
 //                   children: [
 //                     TableRow(
 //                       children: [
-//                         TableCell(
-//                           child: Text('No'),
-//                         ),
-//                         TableCell(
-//                           child: Text('Jumlah'),
-//                         ),
-//                         TableCell(
-//                           child: Text('Isi'),
-//                         ),
-//                         TableCell(
-//                           child: Text('Nama'),
-//                         ),
-//                         TableCell(
-//                           child: Text('Harga'),
-//                         ),
-//                         TableCell(
-//                           child: Row(
-//                             children: [
-//                               Icon(Icons.update),
-//                             ],
-//                           ),
-//                         ),
+//                         TableCell(child: Text('No')),
+//                         TableCell(child: Text('Jumlah')),
+//                         TableCell(child: Text('Isi')),
+//                         TableCell(child: Text('Nama')),
+//                         TableCell(child: Text('Harga')),
+//                         TableCell(child: Text('Time')),
 //                       ],
 //                     ),
 //                     ..._bonTokoItems.map((item) {
 //                       return TableRow(
 //                         children: [
-//                           TableCell(
-//                             child: Text((_bonTokoItems.indexOf(item) + 1).toString()),
-//                           ),
-//                           TableCell(
-//                             child: Text(item.jumlah),
-//                           ),
-//                           TableCell(
-//                             child: Text(item.isi),
-//                           ),
-//                           TableCell(
-//                             child: Text(item.nama),
-//                           ),
-//                           TableCell(
-//                             child: Text(item.harga),
-//                           ),
-//                           TableCell(
-//                             child: Row(
-//                               children: [
-//                                 Text(DateFormat('dd/MM').format(item.lastupdate)),
-//                               ],
-//                             ),
-//                           ),
+//                           TableCell(child: Text((_bonTokoItems.indexOf(item) + 1).toString())),
+//                           TableCell(child: Text(item.jumlah)),
+//                           TableCell(child: Text(item.isi)),
+//                           TableCell(child: Text(item.nama)),
+//                           TableCell(child: Text(item.harga)),
+//                           TableCell(child: Text(DateFormat('dd/MM').format(item.lastupdate))),
 //                         ],
 //                       );
 //                     }).toList(),
@@ -261,14 +229,18 @@
 //     );
 //   }
 
-//   void addItem(String jumlah, String isi, String nama, String harga, String kategori, DateTime lastupdate) {
-//     FirebaseFirestore.instance.collection(_collectionName).add({
-//       'jumlah': jumlah,
-//       'isi': isi,
-//       'nama': nama,
-//       'kategori': kategori,
-//       'harga': harga,
-//       'lastupdate': Timestamp.fromDate(lastupdate),
-//     });
+//   Future<void> addItem(String jumlah, String isi, String nama, String harga, String kategori, DateTime lastupdate) async {
+//     try {
+//       await _firestore.collection(_collectionName).add({
+//         'jumlah': jumlah,
+//         'isi': isi,
+//         'nama': nama,
+//         'kategori': kategori,
+//         'harga': harga,
+//         'lastupdate': Timestamp.fromDate(lastupdate),
+//       });
+//     } catch (e) {
+//       print('Failed to add item: $e');
+//     }
 //   }
 // }

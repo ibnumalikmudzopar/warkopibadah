@@ -234,33 +234,33 @@ class _BarangScreenState extends State<BarangScreen> {
               var item = filteredItems[index];
               return Slidable(
                 endActionPane: 
-                ActionPane(motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(onPressed: (context){
-                      deleteItem(item.id);
-                    },
-                    backgroundColor: Colors.red, foregroundColor: Colors.white, icon: Icons.delete,
-                    // label: 'Delete',
-                    spacing: 8,
-                  ),
-                  SlidableAction(
-                        onPressed: (context) {
-                          showUpdateDialog(item.id, item.name, item.hargapcs, item.hargapak, item.kategori??'', item.modal ?? '');
-                        },
-                        backgroundColor: Colors.yellow,
-                        foregroundColor: Colors.white,
-                        icon: Icons.edit,
-                        // label: 'Edit',
-                        // spacing: 8,
-                  ),
-                  SlidableAction(
-                    onPressed: null,
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    label: 'M: ${item.modal}',
-                    spacing: 8,
-                  )
-                ]
+                  ActionPane(motion: const ScrollMotion(),
+                  children: [
+                    SlidableAction(onPressed: (context){
+                        deleteItem(item.id);
+                      },
+                      backgroundColor: Colors.red, foregroundColor: Colors.white, icon: Icons.delete,
+                      // label: 'Delete',
+                      spacing: 8,
+                    ),
+                    SlidableAction(
+                          onPressed: (context) {
+                            showUpdateDialog(item.id, item.name, item.hargapcs, item.hargapak, item.kategori??'', item.modal ?? '');
+                          },
+                          backgroundColor: Colors.yellow,
+                          foregroundColor: Colors.white,
+                          icon: Icons.edit,
+                          // label: 'Edit',
+                          // spacing: 8,
+                    ),
+                    SlidableAction(
+                      onPressed: null,
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      label: 'M: ${item.modal}',
+                      spacing: 8,
+                    )
+                  ]
                 ),
                 child: Table(
                   columnWidths: const {
