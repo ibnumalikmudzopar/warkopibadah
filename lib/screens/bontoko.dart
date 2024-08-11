@@ -41,6 +41,7 @@ class _BontokoState extends State<Bontoko> {
 
           List<BonTokoItem> _bonTokoItems = snapshot.data!.docs.map((item) {
             return BonTokoItem(
+              id: item.id,
               jumlah: item['jumlah']?.toString() ?? '0',
               isi: item['isi'] ?? '',
               nama: item['nama'] ?? '',
@@ -55,7 +56,7 @@ class _BontokoState extends State<Bontoko> {
               SliverToBoxAdapter(
                 child: Table(
                   border: TableBorder.all(color: Colors.transparent),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.5),
                     1: FlexColumnWidth(1.1),
                     2: FlexColumnWidth(0.5),
@@ -64,7 +65,7 @@ class _BontokoState extends State<Bontoko> {
                     5: FlexColumnWidth(0.8),
                   },
                   children: [
-                    TableRow(
+                    const TableRow(
                       children: [
                         TableCell(child: Text('No')),
                         TableCell(child: Text('Jumlah')),
@@ -87,7 +88,7 @@ class _BontokoState extends State<Bontoko> {
                         children: [
                           SlidableAction(
                             onPressed: (context) {
-                              // deleteItem(item.id);
+                              _showDeleteConfirmationDialog(item);
                             },
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
@@ -96,7 +97,7 @@ class _BontokoState extends State<Bontoko> {
                           ),
                           SlidableAction(
                             onPressed: (context) {
-                              // editItem(item);
+                              showUpdateDialog(item.id, item.jumlah, item.isi, item.nama, item.harga, item.kategori);
                             },
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -107,8 +108,12 @@ class _BontokoState extends State<Bontoko> {
                       ),
                       child: Table(
                         columnWidths: const {
-                          0: FixedColumnWidth(50.0), // Kolom "No" dengan lebar tetap 50 piksel
-                          1: FlexColumnWidth(1.0),
+                          0: FlexColumnWidth(0.5),
+                          1: FlexColumnWidth(1.1),
+                          2: FlexColumnWidth(0.5),
+                          3: FlexColumnWidth(2.0),
+                          4: FlexColumnWidth(1.5),
+                          5: FlexColumnWidth(0.8),
                         },
                         border: TableBorder.all(color: Colors.transparent),
                         children: [
@@ -135,19 +140,46 @@ class _BontokoState extends State<Bontoko> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: showAddDialog,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 
-  showAddDialog() {
+  void _showDeleteConfirmationDialog(BonTokoItem item) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Hapus ${item.nama}?'),
+          content: Text('Anda yakin ingin menghapus item ini?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                deleteItem(item.id);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Hapus'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showAddDialog() {
     var jumlahController = TextEditingController();
     var isiController = TextEditingController();
     var namaController = TextEditingController();
     var hargaController = TextEditingController();
 
-    var _currencies = [
+    List<String> _currencies = [
       "Rokok",
       "Makanan",
       "Minuman",
@@ -157,111 +189,109 @@ class _BontokoState extends State<Bontoko> {
       "Lainnya",
     ];
 
-    String _currentSelectedKategori = _currencies[0];
+    String _currentSelectedKategori = _currencies.isNotEmpty ? _currencies[0] : '';
 
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return Dialog(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Center(
-                      child: const Text('Detail Barang', style: TextStyle(fontSize: 20)),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: jumlahController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(13.0),
-                        ),
-                        labelText: 'Jumlah',
+            return AlertDialog(
+              title: const Text('Detail Barang'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: jumlahController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
                       ),
+                      labelText: 'Jumlah',
                     ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: isiController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(13.0),
-                        ),
-                        labelText: 'Isi',
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: isiController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
                       ),
+                      labelText: 'Isi',
                     ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: namaController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(13.0),
-                        ),
-                        labelText: 'Nama',
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: namaController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
                       ),
+                      labelText: 'Nama',
                     ),
-                    const SizedBox(height: 10),
-                    FormField<String>(
-                      builder: (FormFieldState<String> state) {
-                        return InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'Pilih Kategori',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                          isEmpty: _currentSelectedKategori == '',
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: _currentSelectedKategori,
-                              isDense: true,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _currentSelectedKategori = newValue ?? _currencies[0];
-                                  state.didChange(newValue);
-                                });
-                              },
-                              items: _currencies.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: hargaController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(13.0),
-                        ),
-                        labelText: 'Harga',
+                  ),
+                  const SizedBox(height: 10),
+                  DropdownButtonFormField<String>(
+                    value: _currentSelectedKategori,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _currentSelectedKategori = newValue ?? _currencies[0];
+                      });
+                    },
+                    items: _currencies.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
                       ),
+                      labelText: 'Pilih Kategori',
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        var jumlah = jumlahController.text.trim();
-                        var isi = isiController.text.trim();
-                        var nama = namaController.text.trim();
-                        var kategori = _currentSelectedKategori;
-                        var harga = hargaController.text.trim();
-                        var lastupdate = DateTime.now();
-                        addItem(jumlah, isi, nama, harga, kategori, lastupdate);
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Simpan'),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: hargaController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      labelText: 'Harga',
                     ),
-                  ],
-                ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ],
               ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (jumlahController.text.isEmpty || namaController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Jumlah dan Nama harus diisi')),
+                      );
+                      return;
+                    }
+                    var jumlah = jumlahController.text.trim();
+                    var isi = isiController.text.trim();
+                    var nama = namaController.text.trim();
+                    var kategori = _currentSelectedKategori;
+                    var harga = hargaController.text.trim();
+                    var lastupdate = DateTime.now();
+                    addItem(jumlah, isi, nama, harga, kategori, lastupdate);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Simpan'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Batal'),
+                ),
+              ],
             );
           },
         );
@@ -280,7 +310,161 @@ class _BontokoState extends State<Bontoko> {
         'lastupdate': Timestamp.fromDate(lastupdate),
       });
     } catch (e) {
-      print('Failed to add item: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menambahkan item: $e')),
+      );
+    }
+  }
+
+  void showUpdateDialog(String id, String jumlah, String isi, String nama, String harga, String kategori) {
+    var jumlahController = TextEditingController(text: jumlah);
+    var isiController = TextEditingController(text: isi);
+    var namaController = TextEditingController(text: nama);
+    var hargaController = TextEditingController(text: harga);
+
+    List<String> _currencies = [
+      "Rokok",
+      "Makanan",
+      "Minuman",
+      "Pindang",
+      "ATK",
+      "Plastik",
+      "Lainnya",
+    ];
+
+    String _currentSelectedKategori = _currencies.contains(kategori) ? kategori : _currencies[0];
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Update Barang'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: jumlahController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      labelText: 'Jumlah',
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: isiController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      labelText: 'Isi',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: namaController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      labelText: 'Nama',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  DropdownButtonFormField<String>(
+                    value: _currentSelectedKategori,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _currentSelectedKategori = newValue ?? _currencies[0];
+                      });
+                    },
+                    items: _currencies.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      labelText: 'Pilih Kategori',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: hargaController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      labelText: 'Harga',
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (jumlahController.text.isEmpty || namaController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Jumlah dan Nama harus diisi')),
+                      );
+                      return;
+                    }
+                    var jumlah = jumlahController.text.trim();
+                    var isi = isiController.text.trim();
+                    var nama = namaController.text.trim();
+                    var kategori = _currentSelectedKategori;
+                    var harga = hargaController.text.trim();
+                    updateItem(id, jumlah, isi, nama, harga, kategori);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Update'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Batal'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> updateItem(String id, String jumlah, String isi, String nama, String harga, String kategori) async {
+    try {
+      await _firestore.collection(_collectionName).doc(id).update({
+        'jumlah': jumlah,
+        'isi': isi,
+        'nama': nama,
+        'kategori': kategori,
+        'harga': harga,
+        'lastupdate': Timestamp.fromDate(DateTime.now()),
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal memperbarui item: $e')),
+      );
+    }
+  }
+
+  Future<void> deleteItem(String id) async {
+    try {
+      await _firestore.collection(_collectionName).doc(id).delete();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menghapus item: $e')),
+      );
     }
   }
 }

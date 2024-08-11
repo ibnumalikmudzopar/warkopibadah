@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:intl/intl.dart';
-// import 'package:warkopibadah/bontokoitem.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
+// import 'package:warkopibadah/bontokoitem.dart';
 
 // class Bontoko extends StatefulWidget {
 //   const Bontoko({Key? key}) : super(key: key);
@@ -32,11 +32,11 @@
 //         stream: _firestore.collection(_collectionName).snapshots(),
 //         builder: (context, snapshot) {
 //           if (snapshot.hasError) {
-//             return Text('Error: ${snapshot.error}');
+//             return Center(child: Text('Error: ${snapshot.error}'));
 //           }
 
 //           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-//             return Text('No data found');
+//             return Center(child: Text('No data found'));
 //           }
 
 //           List<BonTokoItem> _bonTokoItems = snapshot.data!.docs.map((item) {
@@ -74,19 +74,63 @@
 //                         TableCell(child: Text('Time')),
 //                       ],
 //                     ),
-//                     ..._bonTokoItems.map((item) {
-//                       return TableRow(
-//                         children: [
-//                           TableCell(child: Text((_bonTokoItems.indexOf(item) + 1).toString())),
-//                           TableCell(child: Text(item.jumlah)),
-//                           TableCell(child: Text(item.isi)),
-//                           TableCell(child: Text(item.nama)),
-//                           TableCell(child: Text(item.harga)),
-//                           TableCell(child: Text(DateFormat('dd/MM').format(item.lastupdate))),
-//                         ],
-//                       );
-//                     }).toList(),
 //                   ],
+//                 ),
+//               ),
+//               SliverList(
+//                 delegate: SliverChildBuilderDelegate(
+//                   (BuildContext context, int index) {
+//                     final item = _bonTokoItems[index];
+//                     return Slidable(
+//                       endActionPane: ActionPane(
+//                         motion: const ScrollMotion(),
+//                         children: [
+//                           SlidableAction(
+//                             onPressed: (context) {
+//                               // deleteItem(item.id);
+//                             },
+//                             backgroundColor: Colors.red,
+//                             foregroundColor: Colors.white,
+//                             icon: Icons.delete,
+//                             spacing: 8,
+//                           ),
+//                           SlidableAction(
+//                             onPressed: (context) {
+//                               // editItem(item);
+//                             },
+//                             backgroundColor: Colors.blue,
+//                             foregroundColor: Colors.white,
+//                             icon: Icons.edit,
+//                             spacing: 8,
+//                           ),
+//                         ],
+//                       ),
+//                       child: Table(
+//                         columnWidths: {
+//                           0: FlexColumnWidth(0.5),
+//                           1: FlexColumnWidth(1.1),
+//                           2: FlexColumnWidth(0.5),
+//                           3: FlexColumnWidth(2.0),
+//                           4: FlexColumnWidth(1.5),
+//                           5: FlexColumnWidth(0.8),
+//                         },
+//                         border: TableBorder.all(color: Colors.transparent),
+//                         children: [
+//                           TableRow(
+//                             children: [
+//                               TableCell(child: Text((index + 1).toString())),
+//                               TableCell(child: Text(item.jumlah)),
+//                               TableCell(child: Text(item.isi)),
+//                               TableCell(child: Text(item.nama)),
+//                               TableCell(child: Text(item.harga)),
+//                               TableCell(child: Text(DateFormat('yyyy-MM-dd').format(item.lastupdate))),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                     );
+//                   },
+//                   childCount: _bonTokoItems.length,
 //                 ),
 //               ),
 //             ],
@@ -242,5 +286,9 @@
 //     } catch (e) {
 //       print('Failed to add item: $e');
 //     }
+//   }
+
+//   showUpdateDialog(){
+    
 //   }
 // }

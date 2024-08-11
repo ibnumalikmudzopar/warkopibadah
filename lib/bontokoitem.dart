@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import library dart:convert untuk pengolahan JSON
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Fungsi untuk membuat objek Item dari JSON
 BonTokoItem itemFromJson(String str) => BonTokoItem.fromJson(json.decode(str));
@@ -11,6 +10,7 @@ String itemToJson(BonTokoItem data) => json.encode(data.toJson());
 // BonToko
 // Kelas yang merepresentasikan sebuah barang (Item)
 class BonTokoItem {
+  String id; // Menambahkan id
   String jumlah;
   String isi;
   String nama;
@@ -19,6 +19,7 @@ class BonTokoItem {
   DateTime lastupdate;
 
   BonTokoItem({
+    required this.id,
     required this.jumlah,
     required this.isi,
     required this.nama,
@@ -29,6 +30,7 @@ class BonTokoItem {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id, // Menambahkan id ke JSON
       'jumlah': jumlah,
       'isi': isi,
       'nama': nama,
@@ -40,6 +42,7 @@ class BonTokoItem {
 
   factory BonTokoItem.fromJson(Map<String, dynamic> json) {
     return BonTokoItem(
+      id: json['id'], // Menambahkan id dari JSON
       jumlah: json['jumlah'],
       isi: json['isi'],
       nama: json['nama'],
