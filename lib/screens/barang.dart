@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Package untuk Firebase Firestore
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'; // Package dasar dari Flutter
 import 'package:warkopibadah/item.dart'; // File dengan definisi kelas Item
 import 'package:flutter_slidable/flutter_slidable.dart'; // Package untuk item slideable
 import 'package:warkopibadah/reusablecode.dart';
 
+// Mendapatkan UID pengguna yang sedang login
+final String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
 // Konstanta untuk nama koleksi di Firestore
 const COLLECTION_NAME = 'barang_items';
 const List<String> kategoriList = ['Semua Kategori', 'ATK', 'Rokok', 'Pindang', 'Makanan', 'Minuman', 'Plastik', 'Lainnya'];
@@ -33,12 +36,30 @@ class _BarangScreenState extends State<BarangScreen> {
   @override
   void initState() {
     fetchRecords(); // Memanggil metode untuk mengambil data dari Firestore saat inisialisasi
+    updateExistingDocuments(); // Panggil fungsi ini agar otomatis dijalankan
     // Mendengarkan perubahan data Firestore
     FirebaseFirestore.instance.collection(COLLECTION_NAME).snapshots().listen((records) {
       mapRecords(records); // Memetakan data Firestore ke dalam objek Item saat ada perubahan
     });
     super.initState();
   }
+    // Fungsi untuk memperbarui field userId
+Future<void> updateExistingDocuments() async {
+  // Dapatkan instance Firestore dan User
+  final _firestore = FirebaseFirestore.instance;
+  final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+
+  // Pastikan currentUserUid tidak null sebelum melanjutkan
+  if (currentUserUid != null) {
+    final querySnapshot = await _firestore.collection(COLLECTION_NAME).get();
+    for (var doc in querySnapshot.docs) {
+      // Update setiap dokumen dengan userId saat ini
+      await doc.reference.update({'userId': currentUserUid});
+    }
+  } else {
+    print('User tidak login.');
+  }
+}
 
   // Metode untuk mengambil data dari Firestore
   fetchRecords() async {
@@ -56,6 +77,7 @@ class _BarangScreenState extends State<BarangScreen> {
         hargapak: item['hargapak'],
         kategori: item['kategori'],
         modal: item['modal'],
+        userId: item['userId'],
       ),
     ).toList();
 
@@ -413,7 +435,7 @@ class _BarangScreenState extends State<BarangScreen> {
                       var hargapcs = hargapcsController.text.trim();
                       var hargapak = hargapakController.text.trim();
                       var modal = modalController.text.trim();
-                      addItem(name, hargapcs, hargapak, _currentSelectedKategori, modal);
+                      addItem(name, hargapcs, hargapak, _currentSelectedKategori, modal, currentUserUid!);
                       Navigator.of(context).pop(); // Tutup dialog setelah tambah barang
                     },
                     child: const Text('Simpan'),
@@ -495,7 +517,7 @@ showUpdateDialog(String id, String currentName, String currentHargapcs, String c
                   var kategori = _currentSelectedValue;
                   var modal = modalController.text.trim(); // Ambil kategori yang dipilih dari dropdown
 
-                  updateItem(id, name, hargapcs, hargapak, kategori, modal); // Memperbarui data barang
+                  updateItem(id, name, hargapcs, hargapak, kategori, modal, currentUserUid!); // Memperbarui data barang
                   Navigator.pop(context); // Menutup dialog setelah memperbarui barang
                 },
                 child: const Text('Update Data'),
@@ -509,13 +531,21 @@ showUpdateDialog(String id, String currentName, String currentHargapcs, String c
 }
 
 // Metode untuk menambahkan barang baru ke Firestore
-addItem(String name, String hargapcs, String hargapak, String kategori, String modal) {
+// addItem(String name, String hargapcs, String hargapak, String kategori, String modal) {
+//     var item = Item(id: 'id', name: name, hargapcs: hargapcs, hargapak: hargapak, kategori: kategori, modal: modal);
+//     FirebaseFirestore.instance.collection(COLLECTION_NAME).add(item.toJson());
+//   }
+Future<void> addItem(String name, String hargapcs, String hargapak, String kategori, String modal, String userId) async {
+  try {
     var item = Item(id: 'id', name: name, hargapcs: hargapcs, hargapak: hargapak, kategori: kategori, modal: modal);
-    FirebaseFirestore.instance.collection(COLLECTION_NAME).add(item.toJson());
+    await FirebaseFirestore.instance.collection(COLLECTION_NAME).add(item.toJson());
+  } catch (e) {
+    print('Error adding item: $e');
   }
+}
 
 // Metode untuk memperbarui data barang di Firestore
-  updateItem(String id, String name, String hargapcs, String hargapak,  String kategori, String modal) {
+  updateItem(String id, String name, String hargapcs, String hargapak,  String kategori, String modal, String userId) {
     FirebaseFirestore.instance.collection(COLLECTION_NAME).doc(id).update(
         {
           "name": name,
@@ -523,6 +553,7 @@ addItem(String name, String hargapcs, String hargapak, String kategori, String m
           "hargapak": hargapak,
           "kategori": kategori,
           "modal": modal,
+          "userId": userId,
         }
     );
   }
@@ -531,5 +562,7 @@ addItem(String name, String hargapcs, String hargapak, String kategori, String m
   deleteItem(String id) {
     FirebaseFirestore.instance.collection(COLLECTION_NAME).doc(id).delete();
   }
+
+
 
 }

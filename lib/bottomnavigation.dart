@@ -6,6 +6,8 @@ import 'screens/pesan.dart';
 import 'screens/profile.dart';
 
 class BottomNavigation extends StatefulWidget {
+  const BottomNavigation({super.key});
+
   @override
   _BottomNavigationState createState() => _BottomNavigationState();
 }

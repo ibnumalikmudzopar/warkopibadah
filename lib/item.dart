@@ -14,6 +14,7 @@ class Item {
     String hargapak; // Harga barang
     String? kategori; // Jenis barang (opsional)
     String? modal; // Jenis barang (opsional)
+    String? userId; // Tambahkan userId
 
     // Konstruktor Item
     Item({
@@ -23,6 +24,7 @@ class Item {
         required this.hargapak,
         this.kategori, // Jenis boleh kosong
         this.modal, // Jenis boleh kosong
+        this.userId, // Tambahkan userId
     });
 
     // Factory method untuk membuat objek Item dari JSON
@@ -33,6 +35,7 @@ class Item {
         hargapcs: json["hargapcs"],
         hargapak: json["hargapak"],
         modal: json["modal"],
+        userId: json["userId"],
     );
 
     // Method untuk mengubah objek Item menjadi JSON
@@ -43,5 +46,6 @@ class Item {
         "hargapcs": hargapcs,
         "hargapak": hargapak,
         "modal": modal,
+        "userId": userId, // Tambahkan userId
     };
 }
