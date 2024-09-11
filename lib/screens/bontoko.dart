@@ -3,9 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:warkopibadah/bontokoitem.dart';
+import 'package:warkopibadah/reusablecode.dart';
 
 class Bontoko extends StatefulWidget {
-  const Bontoko({Key? key}) : super(key: key);
+  const Bontoko({super.key});
 
   @override
   _BontokoState createState() => _BontokoState();
@@ -36,10 +37,10 @@ class _BontokoState extends State<Bontoko> {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No data found'));
+            return const Center(child: Text('No data found'));
           }
 
-          List<BonTokoItem> _bonTokoItems = snapshot.data!.docs.map((item) {
+          List<BonTokoItem> bonTokoItems = snapshot.data!.docs.map((item) {
             return BonTokoItem(
               id: item.id,
               jumlah: item['jumlah']?.toString() ?? '0',
@@ -57,22 +58,41 @@ class _BontokoState extends State<Bontoko> {
                 child: Table(
                   border: TableBorder.all(color: Colors.transparent),
                   columnWidths: const {
-                    0: FlexColumnWidth(0.5),
-                    1: FlexColumnWidth(1.1),
-                    2: FlexColumnWidth(0.5),
-                    3: FlexColumnWidth(2.0),
-                    4: FlexColumnWidth(1.5),
-                    5: FlexColumnWidth(0.8),
+                    0: FlexColumnWidth(0.7),
+                    1: FlexColumnWidth(1.3),
+                    2: FlexColumnWidth(0.8),
+                    3: FlexColumnWidth(1.9),
+                    4: FlexColumnWidth(1.4),
+                    5: FlexColumnWidth(0.9),
                   },
-                  children: [
-                    const TableRow(
+                  children: const [
+                    TableRow(
                       children: [
-                        TableCell(child: Text('No')),
-                        TableCell(child: Text('Jumlah')),
-                        TableCell(child: Text('Isi')),
-                        TableCell(child: Text('Nama')),
-                        TableCell(child: Text('Harga')),
-                        TableCell(child: Text('Time')),
+                        TableCell(
+                          child: Center(
+                              child: Padding(padding: EdgeInsets.all(9.0),
+                              child: Text("No"),),
+                            )),
+                        TableCell(child: Center(child: Padding(
+                          padding: EdgeInsets.all(9.0),
+                          child: Text('Jumlah'),
+                        ))),
+                        TableCell(child: Center(child: Padding(
+                          padding: EdgeInsets.all(9.0),
+                          child: Text('Isi'),
+                        ))),
+                        TableCell(child: Center(child: Padding(
+                          padding: EdgeInsets.all(9.0),
+                          child: Text('Nama'),
+                        ))),
+                        TableCell(child: Center(child: Padding(
+                          padding: EdgeInsets.all(9.0),
+                          child: Text('Harga'),
+                        ))),
+                        TableCell(child: Center(child: Padding(
+                          padding: EdgeInsets.all(9.0),
+                          child: Text('Time'),
+                        ))),
                       ],
                     ),
                   ],
@@ -81,7 +101,7 @@ class _BontokoState extends State<Bontoko> {
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
-                    final item = _bonTokoItems[index];
+                    final item = bonTokoItems[index];
                     return Slidable(
                       endActionPane: ActionPane(
                         motion: const ScrollMotion(),
@@ -109,8 +129,8 @@ class _BontokoState extends State<Bontoko> {
                       child: Table(
                         columnWidths: const {
                           0: FlexColumnWidth(0.5),
-                          1: FlexColumnWidth(1.1),
-                          2: FlexColumnWidth(0.5),
+                          1: FlexColumnWidth(1.2),
+                          2: FlexColumnWidth(0.8),
                           3: FlexColumnWidth(2.0),
                           4: FlexColumnWidth(1.5),
                           5: FlexColumnWidth(0.8),
@@ -119,19 +139,41 @@ class _BontokoState extends State<Bontoko> {
                         children: [
                           TableRow(
                             children: [
-                              TableCell(child: Text((index + 1).toString())),
-                              TableCell(child: Text(item.jumlah)),
-                              TableCell(child: Text(item.isi)),
-                              TableCell(child: Text(item.nama)),
-                              TableCell(child: Text(item.harga)),
-                              TableCell(child: Text(DateFormat('yyyy-MM-dd').format(item.lastupdate))),
+                              TableCell(
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(9.0),
+                                    child: Text((index + 1).toString()),
+                                  )
+                                )
+                                ),
+                              TableCell(child: Center(child: Padding(
+                                padding: const EdgeInsets.all(9.0),
+                                child: Text(item.jumlah),
+                              ))),
+                              TableCell(child: Center(child: Padding(
+                                padding: const EdgeInsets.all(9.0),
+                                child: Text(item.isi),
+                              ))),
+                              TableCell(child: Center(child: Padding(
+                                padding: const EdgeInsets.all(9.0),
+                                child: Text(item.nama),
+                              ))),
+                              TableCell(child: Center(child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(item.harga),
+                              ))),
+                              TableCell(child: Center(child: Padding(
+                                padding: const EdgeInsets.all(9.0),
+                                child: Text(DateFormat('yyyy-MM-dd').format(item.lastupdate)),
+                              ))),
                             ],
                           ),
                         ],
                       ),
                     );
                   },
-                  childCount: _bonTokoItems.length,
+                  childCount: bonTokoItems.length,
                 ),
               ),
             ],
@@ -152,7 +194,7 @@ class _BontokoState extends State<Bontoko> {
       builder: (context) {
         return AlertDialog(
           title: Text('Hapus ${item.nama}?'),
-          content: Text('Anda yakin ingin menghapus item ini?'),
+          content: const Text('Anda yakin ingin menghapus item ini?'),
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -179,7 +221,7 @@ class _BontokoState extends State<Bontoko> {
     var namaController = TextEditingController();
     var hargaController = TextEditingController();
 
-    List<String> _currencies = [
+    List<String> currencies = [
       "Rokok",
       "Makanan",
       "Minuman",
@@ -189,7 +231,7 @@ class _BontokoState extends State<Bontoko> {
       "Lainnya",
     ];
 
-    String _currentSelectedKategori = _currencies.isNotEmpty ? _currencies[0] : '';
+    String currentSelectedKategori = currencies.isNotEmpty ? currencies[0] : '';
 
     showDialog(
       context: context,
@@ -233,13 +275,13 @@ class _BontokoState extends State<Bontoko> {
                   ),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
-                    value: _currentSelectedKategori,
+                    value: currentSelectedKategori,
                     onChanged: (String? newValue) {
                       setState(() {
-                        _currentSelectedKategori = newValue ?? _currencies[0];
+                        currentSelectedKategori = newValue ?? currencies[0];
                       });
                     },
-                    items: _currencies.map((String value) {
+                    items: currencies.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -270,14 +312,14 @@ class _BontokoState extends State<Bontoko> {
                   onPressed: () {
                     if (jumlahController.text.isEmpty || namaController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Jumlah dan Nama harus diisi')),
+                        const SnackBar(content: Text('Jumlah dan Nama harus diisi')),
                       );
                       return;
                     }
                     var jumlah = jumlahController.text.trim();
                     var isi = isiController.text.trim();
                     var nama = namaController.text.trim();
-                    var kategori = _currentSelectedKategori;
+                    var kategori = currentSelectedKategori;
                     var harga = hargaController.text.trim();
                     var lastupdate = DateTime.now();
                     addItem(jumlah, isi, nama, harga, kategori, lastupdate);
@@ -322,7 +364,7 @@ class _BontokoState extends State<Bontoko> {
     var namaController = TextEditingController(text: nama);
     var hargaController = TextEditingController(text: harga);
 
-    List<String> _currencies = [
+    List<String> currencies = [
       "Rokok",
       "Makanan",
       "Minuman",
@@ -332,7 +374,7 @@ class _BontokoState extends State<Bontoko> {
       "Lainnya",
     ];
 
-    String _currentSelectedKategori = _currencies.contains(kategori) ? kategori : _currencies[0];
+    String currentSelectedKategori = currencies.contains(kategori) ? kategori : currencies[0];
 
     showDialog(
       context: context,
@@ -376,13 +418,13 @@ class _BontokoState extends State<Bontoko> {
                   ),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
-                    value: _currentSelectedKategori,
+                    value: currentSelectedKategori,
                     onChanged: (String? newValue) {
                       setState(() {
-                        _currentSelectedKategori = newValue ?? _currencies[0];
+                        currentSelectedKategori = newValue ?? currencies[0];
                       });
                     },
-                    items: _currencies.map((String value) {
+                    items: currencies.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -413,14 +455,14 @@ class _BontokoState extends State<Bontoko> {
                   onPressed: () {
                     if (jumlahController.text.isEmpty || namaController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Jumlah dan Nama harus diisi')),
+                        const SnackBar(content: Text('Jumlah dan Nama harus diisi')),
                       );
                       return;
                     }
                     var jumlah = jumlahController.text.trim();
                     var isi = isiController.text.trim();
                     var nama = namaController.text.trim();
-                    var kategori = _currentSelectedKategori;
+                    var kategori = currentSelectedKategori;
                     var harga = hargaController.text.trim();
                     updateItem(id, jumlah, isi, nama, harga, kategori);
                     Navigator.of(context).pop();

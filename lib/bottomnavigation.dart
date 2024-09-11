@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'screens/barang.dart';
 import 'screens/belanja.dart';
 import 'screens/bontoko.dart';
-import 'screens/pesan.dart';
 import 'screens/profile.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -15,19 +14,17 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   int _currentIndex = 0;
   final List<Widget> _children = [
-    BarangScreen(title: 'Daftar Barang',),
-    Bontoko(),
+    const BarangScreen(title: 'Daftar Barang',),
+    const Bontoko(),
     BelanjaScreen(),
-    PesanScreen(),
     ProfileScreen(),
   ];
 
   final List<String> _appBarTitles = [
-    'Daftar Barang',
-    'BonTok',
+    'Harga Jual Barang',
+    'Harga Beli Barang',
     'Daftar Belanja',
-    'Pesan',
-    'Profile',
+    'User',
   ];
 
   void onTabTapped(int index) {
@@ -49,26 +46,22 @@ class _BottomNavigationState extends State<BottomNavigation> {
         unselectedItemColor: Colors.grey, // Warna item tidak terpilih
         onTap: onTabTapped,
         currentIndex: _currentIndex,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.store),
-            label: 'Barang',
+            label: 'Harga Jual Barang',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.price_check),
-            label: 'Bon Toko',
+            label: 'Harga Beli Barang',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
-            label: 'Belanja',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Pesan',
+            label: 'Daftar Belanja',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_2),
-            label: 'Profile',
+            label: 'User',
           ),
         ],
       ),

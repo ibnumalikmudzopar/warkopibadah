@@ -10,42 +10,42 @@ String itemToJson(Item data) => json.encode(data.toJson());
 class Item {
     String id; // ID barang
     String name; // Nama barang
-    String hargapcs; // Harga barang
-    String hargapak; // Harga barang
-    String? kategori; // Jenis barang (opsional)
-    String? modal; // Jenis barang (opsional)
-    String? userId; // Tambahkan userId
+    String hargapcs; // Harga barang / pcs
+    String hargapak; // Harga barang / pak
+    String? kategori; // Kategori barang (opsional)
+    String? modal; // Modal barang (opsional)
+    String? userId; // User ID (opsional)
 
     // Konstruktor Item
     Item({
-        required this.id, // ID wajib diisi
-        required this.name, // Nama wajib diisi
-        required this.hargapcs, // Harga wajib diisi
+        required this.id,
+        required this.name,
+        required this.hargapcs,
         required this.hargapak,
-        this.kategori, // Jenis boleh kosong
-        this.modal, // Jenis boleh kosong
-        this.userId, // Tambahkan userId
+        this.kategori,
+        this.modal,
+        this.userId,
     });
 
     // Factory method untuk membuat objek Item dari JSON
     factory Item.fromJson(Map<String, dynamic> json) => Item(
         id: json["id"],
         name: json["name"],
-        kategori: json["kategori"],
         hargapcs: json["hargapcs"],
         hargapak: json["hargapak"],
-        modal: json["modal"],
-        userId: json["userId"],
+        kategori: json["kategori"], // Pastikan kategori opsional
+        modal: json["modal"], // Pastikan modal opsional
+        userId: json["userId"], // Pastikan userId opsional
     );
 
     // Method untuk mengubah objek Item menjadi JSON
     Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
-        "kategori": kategori,
         "hargapcs": hargapcs,
         "hargapak": hargapak,
-        "modal": modal,
-        "userId": userId, // Tambahkan userId
+        "kategori": kategori ?? '', // Jika null, berikan default ''
+        "modal": modal ?? '', // Jika null, berikan default ''
+        "userId": userId ?? '', // Jika null, berikan default ''
     };
 }

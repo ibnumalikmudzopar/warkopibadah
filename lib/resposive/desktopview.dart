@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Desktopview extends StatefulWidget {
-  const Desktopview({ Key? key }) : super(key: key);
+  const Desktopview({ super.key });
 
   @override
   _DesktopviewState createState() => _DesktopviewState();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Phonelandscapeview extends StatefulWidget {
-  const Phonelandscapeview({ Key? key }) : super(key: key);
+  const Phonelandscapeview({ super.key });
 
   @override
   _PhonelandscapeviewState createState() => _PhonelandscapeviewState();

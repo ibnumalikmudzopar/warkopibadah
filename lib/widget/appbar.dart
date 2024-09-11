@@ -3,7 +3,7 @@ import 'package:flutter/material.dart'; // Import library flutter/material untuk
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
 
-  const MyAppBar({Key? key, required this.title}) : super(key: key);
+  const MyAppBar({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

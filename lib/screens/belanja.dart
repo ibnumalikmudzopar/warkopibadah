@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 const COLLECTION_NAME = 'barang_items';
 
 class BelanjaScreen extends StatefulWidget {
-  BelanjaScreen({Key? key}) : super(key: key);
+  const BelanjaScreen({super.key});
 
   @override
   _BelanjaScreenState createState() => _BelanjaScreenState();
@@ -20,7 +20,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey untuk mengakses form secara global
   String _namaBelanja = ''; // Variabel untuk menyimpan nama barang belanja dari input pengguna
   int _jumlah = 0; // Variabel untuk menyimpan jumlah barang belanja dari input pengguna
-  List<Map<String, dynamic>> _belanjaList = []; // List untuk menyimpan daftar barang belanja yang akan ditampilkan di DataTable
+  final List<Map<String, dynamic>> _belanjaList = []; // List untuk menyimpan daftar barang belanja yang akan ditampilkan di DataTable
   List<String> _namaBarang = []; // List untuk menyimpan nama barang dari Firestore untuk saran autocomplete
   final TextEditingController searchNamaBarangController = TextEditingController(); // Controller untuk field pencarian nama barang
   bool showDetail = false; // Status untuk menampilkan atau menyembunyikan detail belanja
@@ -46,9 +46,9 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
 
   // Fungsi untuk memetakan data dari Firestore ke dalam _namaBarang
   mapRecords(QuerySnapshot<Map<String, dynamic>> records) {
-    var _list = records.docs.map((item) => item['name'] as String).toList();
+    var list = records.docs.map((item) => item['name'] as String).toList();
     setState(() {
-      _namaBarang = _list; // Perbarui _namaBarang dengan data yang diambil dari Firestore
+      _namaBarang = list; // Perbarui _namaBarang dengan data yang diambil dari Firestore
     });
   }
 
@@ -81,28 +81,28 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                     Center(
                       child: Text(
                         monthName,
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: daysOfWeek.map((day) => Expanded(
                             child: Center(
-                              child: Text(day, style: TextStyle(fontWeight: FontWeight.bold)),
+                              child: Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           )).toList(),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Expanded(
                       child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 7,
                         ),
                         itemCount: daysInMonth(now) + startWeekday,
                         itemBuilder: (context, index) {
                           if (index < startWeekday) {
-                            return Center(child: Text(''));
+                            return const Center(child: Text(''));
                           }
                           DateTime date = DateTime(now.year, now.month, index - startWeekday + 1);
                           bool isToday = date.day == now.day && date.month == now.month && date.year == now.year;
@@ -120,7 +120,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                                       color: isToday ? Colors.blue : Colors.black,
                                     ),
                                   ),
-                                  Text('Done')
+                                  const Text('')
                                 ],
                               ),
                             ),
@@ -128,7 +128,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                         },
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: ElevatedButton(
@@ -137,10 +137,10 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                             showForm = true;
                           });
                         },
-                        child: Icon(Icons.add),
+                        child: const Icon(Icons.add),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -152,7 +152,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
     future: _fetchBelanjaData(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else {
@@ -163,9 +163,9 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
             children: [
               Text(
                 'Detail Belanja ${DateFormat.yMMMMd().format(selectedDate!)}',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
                   itemCount: belanjaList.length,
@@ -190,7 +190,7 @@ class _BelanjaScreenState extends State<BelanjaScreen> {
                     selectedDate = null; // Reset tanggal yang dipilih
                   });
                 },
-                child: Text('Kembali'),
+                child: const Text('Kembali'),
               ),
             ],
           ),
@@ -217,13 +217,13 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: 300,
             width: 500,
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: DataTable(
-                columns: [
+                columns: const [
                   DataColumn(label: Text('No.')), // Kolom untuk nomor urut
                   DataColumn(label: Text('Nama Barang')), // Kolom untuk nama barang
                   DataColumn(label: Text('Jumlah')), // Kolom untuk nama barang
@@ -246,19 +246,19 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               ElevatedButton(onPressed: () {
                 setState(() {
                   _belanjaList.clear(); // Tombol untuk menghapus semua item dari _belanjaList
                 });
-              }, child: Text("Reset")),
+              }, child: const Text("Reset")),
               ElevatedButton(
                 onPressed: () {
                   submitToFirebase(); // Tombol untuk mengirim data barang belanja ke Firebase
                 },
-                child: Text('Submit to Firebase'),
+                child: const Text('Submit to Firebase'),
               ),
             ],
           ),
@@ -266,12 +266,12 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
             children: [
               ElevatedButton(
                   onPressed: _showAddBarangDialog, // Tombol untuk menampilkan dialog penambahan barang belanja
-                  child: Text("Tambah")),
+                  child: const Text("Tambah")),
               ElevatedButton(onPressed: () {
                 setState(() {
                   showForm = false; // Tombol untuk kembali ke tampilan utama dari form
                 });
-              }, child: Text("Kembali"))
+              }, child: const Text("Kembali"))
             ],
           )
         ],
@@ -293,13 +293,13 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Tambah Belanja'),
+          title: const Text('Tambah Belanja'),
           content: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // TypeAheadField untuk memberikan saran nama barang berdasarkan input pengguna
                 TypeAheadField(
                   builder: (context, searchNamaBarangcontroller, focusNode){
@@ -307,7 +307,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                       controller: searchNamaBarangcontroller,
                       focusNode: focusNode,
                       autofocus: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Nama Barang',
                       ),
@@ -333,10 +333,10 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                     return suggestions.docs.map((doc) => doc['name']).toList();
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // TextFormField untuk memasukkan jumlah barang belanja
                 TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Jumlah',
                     border: OutlineInputBorder(),
                   ),
@@ -365,7 +365,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                       _selectedOption = newValue!;
                     });
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Opsi',
                   ),
@@ -378,7 +378,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
               onPressed: () {
                 Navigator.of(context).pop(); // Tombol untuk membatalkan dialog
               },
-              child: Text('Batal'),
+              child: const Text('Batal'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -391,7 +391,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
                   Navigator.of(context).pop(); // Tutup dialog
                 }
               },
-              child: Text('Tambah'),
+              child: const Text('Tambah'),
             ),
           ],
         );
@@ -430,7 +430,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
     String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     CollectionReference belanjaCollection = FirebaseFirestore.instance.collection('belanja_items');
 
-    _belanjaList.forEach((belanja) {
+    for (var belanja in _belanjaList) {
       belanjaCollection
         .doc(formattedDate) // ID dokumen adalah tanggal
         .collection('items') // Subkoleksi 'items'
@@ -442,7 +442,7 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
         }).then((value) {
           // Menampilkan Snackbar ketika data berhasil ditambahkan
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Data berhasil ditambahkan!'),
             ),
           );
@@ -454,13 +454,13 @@ Future<List<Map<String, dynamic>>> _fetchBelanjaData() async {
             ),
           );
         });
-    });
+    }
   }
 
   // Fungsi untuk menghitung jumlah hari dalam bulan saat ini
   int daysInMonth(DateTime date) {
     var firstDayThisMonth = DateTime(date.year, date.month, 1);
     var firstDayNextMonth = DateTime(firstDayThisMonth.year, firstDayThisMonth.month + 1, 1);
-    return firstDayNextMonth.subtract(Duration(days: 1)).day;
+    return firstDayNextMonth.subtract(const Duration(days: 1)).day;
   }
 }

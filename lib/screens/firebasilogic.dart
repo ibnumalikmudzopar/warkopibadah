@@ -11,8 +11,8 @@ void fetchItemsByDate(String date) {
     .collection('items')
     .get()
     .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
+      for (var doc in querySnapshot.docs) {
         print(doc.data());
-      });
+      }
     });
 }

@@ -4,7 +4,7 @@ import 'package:warkopibadah/login.dart';
 import 'auth.dart';
 
 class WidgetTree extends StatefulWidget {
-  const WidgetTree({ Key? key }) : super(key: key);
+  const WidgetTree({ super.key });
 
   @override
   _WidgetTreeState createState() => _WidgetTreeState();
@@ -17,9 +17,9 @@ class _WidgetTreeState extends State<WidgetTree> {
       stream: Auth().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData){
-          return Home(title: 'Warkop Ibadah',);
+          return const Home(title: 'Warkop Ibadah',);
         } else {
-          return LoginPage();
+          return const LoginPage();
         }
       }
     );

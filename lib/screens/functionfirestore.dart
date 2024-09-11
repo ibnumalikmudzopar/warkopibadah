@@ -29,6 +29,8 @@ Future<List<Map<String, dynamic>>> showPurchasesOnDate(DateTime date) async {
 // still function show but in UI
 
 class ShowPurchasesScreen extends StatefulWidget {
+  const ShowPurchasesScreen({super.key});
+
   @override
   _ShowPurchasesScreenState createState() => _ShowPurchasesScreenState();
 }
@@ -68,7 +70,7 @@ class _ShowPurchasesScreenState extends State<ShowPurchasesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Show Purchases'),
+        title: const Text('Show Purchases'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -85,11 +87,11 @@ class _ShowPurchasesScreenState extends State<ShowPurchasesScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () => _selectDate(context),
-                  child: Text('Choose Date'),
+                  child: const Text('Choose Date'),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: _purchases.length,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 class Tabletview extends StatefulWidget {
-  const Tabletview({ Key? key }) : super(key: key);
+  const Tabletview({ super.key });
 
   @override
   _TabletviewState createState() => _TabletviewState();
