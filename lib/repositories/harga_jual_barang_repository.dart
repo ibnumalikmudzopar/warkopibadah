@@ -4,7 +4,7 @@ import '../models/harga_jual_barang_item.dart';
 const String BARANG_COLLECTION = 'barang_items';
 const String CATEGORY_COLLECTION = 'categories';
 
-class BarangRepository {
+class HargaJualBarangRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   /// Mengambil stream dari semua item barang.

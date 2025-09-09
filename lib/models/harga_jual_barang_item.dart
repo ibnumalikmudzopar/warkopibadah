@@ -7,7 +7,7 @@ import 'dart:convert'; // Mengimpor pustaka 'dart:convert' untuk pengolahan JSON
 /// Fungsi utilitas untuk membuat objek [Item] dari string JSON.
 ///
 /// Parameter:
-/// - [str]: String JSON yang berisi data item.
+/// - [str]: String JSON yang berisi data item. 
 ///
 /// Mengembalikan:
 /// - Sebuah instance [Item] yang dibuat dari data JSON.

@@ -1,37 +1,59 @@
+// File: lib/viewmodels/harga_jual_barang_viewmodel.dart
+
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart'; // Tambahkan ini
 import '../models/harga_jual_barang_item.dart';
-import '../repositories/barang_repository.dart';
+import '../repositories/harga_jual_barang_repository.dart';
 
 class HargaJualBarangViewModel with ChangeNotifier {
-  final BarangRepository _repository = BarangRepository();
+  final HargaJualBarangRepository _repository;
+
+  StreamSubscription? _itemsSubscription;
+  StreamSubscription? _categoriesSubscription;
 
   // State
   List<Item> _items = [];
   List<String> _categories = [];
   String _selectedKategori = 'Semua Kategori';
-  String _searchQuery = '';
   bool _isLoading = false;
   String? _error;
+  bool _showSearchBox = false;
+
+  // 1. Tambahkan TextEditingController dan FocusNode
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   // Getters
   List<Item> get items => _items;
   List<String> get categories => _categories;
   String get selectedKategori => _selectedKategori;
-  String get searchQuery => _searchQuery;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  bool get showSearchBox => _showSearchBox;
+  
+  // 2. Tambahkan getters untuk controller dan focus node
+  TextEditingController get searchController => _searchController;
+  FocusNode get searchFocusNode => _searchFocusNode;
 
-  HargaJualBarangViewModel() {
+  HargaJualBarangViewModel({required HargaJualBarangRepository repository})
+      : _repository = repository {
     _setupFirestoreListeners();
+    // 3. Tambahkan listener untuk controller, agar dapat memfilter data secara real-time
+    _searchController.addListener(() {
+      notifyListeners();
+    });
   }
 
-  /// Mendengarkan perubahan data dari repository secara real-time.
   void _setupFirestoreListeners() {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
-    _repository.getBarangItems().listen(
+    _itemsSubscription?.cancel();
+    _categoriesSubscription?.cancel();
+
+    _itemsSubscription = _repository.getBarangItems().listen(
       (data) {
         _items = data;
         _isLoading = false;
@@ -44,10 +66,9 @@ class HargaJualBarangViewModel with ChangeNotifier {
       },
     );
 
-    _repository.getCategories().listen(
+    _categoriesSubscription = _repository.getCategories().listen(
       (data) {
         _categories = data;
-        // Memastikan kategori yang dipilih masih ada setelah update
         if (!_categories.contains(_selectedKategori) && _selectedKategori != 'Semua Kategori') {
           _selectedKategori = 'Semua Kategori';
         }
@@ -60,41 +81,45 @@ class HargaJualBarangViewModel with ChangeNotifier {
     );
   }
 
-  /// Mengupdate kategori yang dipilih oleh pengguna.
   void updateSelectedKategori(String? newValue) {
     if (newValue != null) {
       _selectedKategori = newValue;
       notifyListeners();
+      // Logika untuk memunculkan keyboard saat search box ditampilkan
+      if (_showSearchBox) {
+      _searchFocusNode.requestFocus();
+    }
     }
   }
 
-  /// Mengupdate query pencarian.
-  void updateSearchQuery(String query) {
-    _searchQuery = query;
+  // 4. Ubah metode ini untuk menggunakan controller dan focus node
+  void toggleSearchBox() {
+    _showSearchBox = !_showSearchBox;
+    if (!_showSearchBox) {
+      _searchController.clear();
+    } else {
+      _searchFocusNode.requestFocus();
+    }
     notifyListeners();
   }
 
-  /// Mengembalikan daftar item yang sudah difilter dan diurutkan.
   List<Item> get filteredAndSortedItems {
     List<Item> filteredItems = _items;
 
-    // Filter berdasarkan kategori
     if (_selectedKategori != 'Semua Kategori') {
       filteredItems = filteredItems.where((item) => item.kategori == _selectedKategori).toList();
     }
 
-    // Filter berdasarkan pencarian
-    if (_searchQuery.isNotEmpty) {
-      filteredItems = filteredItems.where((item) => item.name.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+    // 5. Ubah logika filter dari _searchQuery menjadi _searchController.text
+    if (_searchController.text.isNotEmpty) {
+      filteredItems = filteredItems.where((item) => item.name.toLowerCase().contains(_searchController.text.toLowerCase())).toList();
     }
 
-    // Urutkan berdasarkan nama
     filteredItems.sort((a, b) => a.name.compareTo(b.name));
 
     return filteredItems;
   }
 
-  // Metode untuk interaksi dengan repository
   Future<void> addItem(Item item) async {
     await _repository.addItem(item);
   }
@@ -109,5 +134,15 @@ class HargaJualBarangViewModel with ChangeNotifier {
 
   Future<void> addCategory(String name) async {
     await _repository.addCategory(name);
+  }
+
+  @override
+  void dispose() {
+    _itemsSubscription?.cancel();
+    _categoriesSubscription?.cancel();
+    // 6. Jangan lupa dispose controller dan focus node
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 }
