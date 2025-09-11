@@ -5,7 +5,7 @@ class CalculatorViewModel with ChangeNotifier {
   String _output = "0";
   String _expression = "";
   List<String> _history = [];
-  String _viewMode = 'calculator'; // 'calculator' atau 'history'
+  String _viewMode = 'calculator';
 
   String get output => _output;
   String get expression => _expression;
@@ -19,8 +19,8 @@ class CalculatorViewModel with ChangeNotifier {
     } else if (buttonText == "⌫") {
       _backspace();
       return;
-    } else if (["+", "-", "x", "/", "%"].contains(buttonText)) {
-      if (_expression.isNotEmpty && ["+", "-", "x", "/", "%"].contains(_expression.substring(_expression.length - 1))) {
+    } else if (["+", "-", "x", "÷", "%"].contains(buttonText)) { // <--- PERBAIKAN DI SINI
+      if (_expression.isNotEmpty && ["+", "-", "x", "÷", "%"].contains(_expression.substring(_expression.length - 1))) {
         _expression = _expression.substring(0, _expression.length - 1) + buttonText;
       } else {
         _expression += buttonText;
@@ -53,7 +53,7 @@ class CalculatorViewModel with ChangeNotifier {
   void _calculateResult() {
     String currentExpression = _expression;
 
-    if (currentExpression.isNotEmpty && ["+", "-", "x", "/", "%"].contains(currentExpression.substring(currentExpression.length - 1))) {
+    if (currentExpression.isNotEmpty && ["+", "-", "x", "÷", "%"].contains(currentExpression.substring(currentExpression.length - 1))) { // <--- PERBAIKAN DI SINI JUGA
       currentExpression = currentExpression.substring(0, currentExpression.length - 1);
     }
     

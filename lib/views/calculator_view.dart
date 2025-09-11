@@ -8,7 +8,7 @@ class CalculatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CalculatorViewModel>(context);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       color: Colors.blueGrey[900],
@@ -35,7 +35,6 @@ class CalculatorView extends StatelessWidget {
             ),
           ),
           const Divider(color: Colors.white54),
-
           if (viewModel.viewMode == 'calculator')
             _buildCalculatorButtons(context, viewModel)
           else
@@ -61,13 +60,13 @@ class CalculatorView extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          height: 300, 
+        SizedBox(
+          height: 300,
           child: viewModel.history.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: const [
                       Icon(Icons.history, color: Colors.white54, size: 64),
                       SizedBox(height: 16),
                       Text("Tidak ada riwayat", style: TextStyle(color: Colors.white54, fontSize: 18)),
@@ -156,12 +155,13 @@ class CalculatorView extends StatelessWidget {
     Color buttonColor = Colors.blueGrey[700]!;
     Color textColor = Colors.white;
 
-    if (["+", "-", "x", "/", "="].contains(text)) {
+    // Logika pewarnaan tombol yang diperbaiki
+    if (["+", "-", "x", "÷", "="].contains(text)) {
       buttonColor = Colors.lightGreen;
     } else if (["C", "⌫", "%"].contains(text)) {
       buttonColor = Colors.blueGrey[600]!;
     }
-    
+
     return Expanded(
       child: Container(
         margin: const EdgeInsets.all(4),
