@@ -51,7 +51,7 @@ class CalculatorView extends StatelessWidget {
         _buildButtonRow(context, ["7", "8", "9", "x"], viewModel.buttonPressed),
         _buildButtonRow(context, ["4", "5", "6", "-"], viewModel.buttonPressed),
         _buildButtonRow(context, ["1", "2", "3", "+"], viewModel.buttonPressed),
-        _buildLastRow(context, ["History", ".", "="], viewModel.buttonPressed, viewModel),
+        _buildLastRow(context, ["History", "0", ".", "="], viewModel.buttonPressed, viewModel),
       ],
     );
   }
@@ -127,29 +127,41 @@ class CalculatorView extends StatelessWidget {
   }
 
   Widget _buildLastRow(BuildContext context, List<String> buttons, Function(String) onPressed, CalculatorViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.all(4),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(20),
-                backgroundColor: Colors.blueGrey[600],
-                foregroundColor: Colors.white,
-                shape: const CircleBorder(),
-              ),
-              onPressed: () => viewModel.toggleHistoryView(),
-              child: const Icon(Icons.history),
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      // Tombol Riwayat
+      Expanded(
+        child: Container(
+          margin: const EdgeInsets.all(4),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.all(20),
+              backgroundColor: Colors.blueGrey[600],
+              foregroundColor: Colors.white,
+              shape: const CircleBorder(),
             ),
+            onPressed: () => viewModel.toggleHistoryView(),
+            child: const Icon(Icons.history),
           ),
         ),
-        _buildButton(context, buttons[1], onPressed),
-        _buildButton(context, buttons[2], onPressed),
-      ],
-    );
-  }
+      ),
+      // Tombol 0 (menggunakan flex untuk memperluas)
+      Expanded(
+        flex: 2,
+        child: _buildButton(context, "0", onPressed),
+      ),
+      // Tombol .
+      Expanded(
+        child: _buildButton(context, ".", onPressed),
+      ),
+      // Tombol =
+      Expanded(
+        child: _buildButton(context, "=", onPressed),
+      ),
+    ],
+  );
+}
 
   Widget _buildButton(BuildContext context, String text, Function(String) onPressed) {
     Color buttonColor = Colors.blueGrey[700]!;
